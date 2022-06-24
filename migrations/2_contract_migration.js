@@ -1,5 +1,8 @@
-var Mycontract = artifacts.require('Mycontract');
+var Mycontract = artifacts.require("DecentToken");
 
-module.exports = function(deployer) {
-  deployer.deploy(Mycontract)
+const name = "test";
+const symbol = "ts";
+
+module.exports = function (deployer) {
+  deployer.deploy(Mycontract, name, symbol);
 };

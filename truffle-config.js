@@ -8,6 +8,7 @@ const HDWalletProvider = require("truffle-hdwallet-provider-klaytn");
 const Caver = require("caver-js");
 
 module.exports = {
+
   networks: {
     baobab: {
       provider: () => {
@@ -42,10 +43,16 @@ module.exports = {
       gasPrice: null,
     },
   },
-
   compilers: {
     solc: {
-      version: "0.5.6",
+      version: "0.5.17", // Fetch exact version from solc-bin (default: truffle's version)
+      settings: {
+        // See the solidity docs for advice about optimization and evmVersion
+        optimizer: {
+          enabled: false,
+          runs: 200,
+        },
+      },
     },
   },
 };
