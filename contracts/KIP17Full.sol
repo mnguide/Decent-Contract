@@ -14,7 +14,7 @@ import "./Decent.sol";
  * @dev see http://kips.klaytn.com/KIPs/kip-17-non_fungible_token
  */
 contract KIP17Full is KIP17, KIP17Enumerable, KIP17Metadata, Decent {
-    constructor (string memory name, string memory symbol) public KIP17Metadata(name, symbol) {
+    constructor (string memory name, string memory symbol, address proxyAddress) public KIP17Metadata(name, symbol) Decent(proxyAddress) {
         // solhint-disable-previous-line no-empty-blocks
     }
 }

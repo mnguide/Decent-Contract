@@ -7,6 +7,36 @@ import "./utils/String.sol";
 
 contract Decent is KIP17Metadata, Ownable {
 
+    address private proxyAddress;
+
+    constructor (address _proxyAddress) internal {
+        proxyAddress = _proxyAddress;
+    }
+
+    function changeProxyAddress(address _newProxyAddress) onlyOwner public {
+        proxyAddress = _newProxyAddress;
+    }
+
+    struct Investor {
+        string Job;
+        string Charactor;
+        string Passive1Name;
+        string Passive2Name;
+        string Passive3Name;
+        uint256 Passive1Value;
+        uint256 Passive2Value;
+        uint256 Passive3Value;
+        string AwakeningName;
+        uint256 AwakeningValue;
+    }
+
+    mapping(uint256 => Investor) tokenIdToInvestors;
+
+    function generateInvestor(uint256 _tokenId) internal {
+        (bool success,) = proxyAddress.delegatecall(abi.encodeWithSignature("_generateInvestor(uint256)",_tokenId));
+        require(success,"generation failed");
+    }
+
     mapping (address => uint256) private _lastCallBlockNumber;
     uint256 private antibotInterval;
 
