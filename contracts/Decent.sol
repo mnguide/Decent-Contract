@@ -113,6 +113,7 @@ contract Decent is KIP17Metadata, Ownable {
         for(uint256 i = 0; i < requestedCount; i++) {
             invocations = invocations.add(1);
             _mint(msg.sender, invocations);
+            generateInvestor(invocations);
         }
         _lastCallBlockNumber[msg.sender] = block.number;
     }
@@ -145,6 +146,7 @@ contract Decent is KIP17Metadata, Ownable {
         for(uint256 i = 0; i < requestedCount; i++) {
             invocations = invocations.add(1);
             _mint(msg.sender, invocations);
+            generateInvestor(invocations);
         }
         whitelistClaimed[msg.sender]=true;
     }
@@ -155,6 +157,7 @@ contract Decent is KIP17Metadata, Ownable {
         for(uint256 i = 0; i < requestedCount; i++) {
             invocations = invocations.add(1);
             _mint(user, invocations);
+            generateInvestor(invocations);
         }
     }
 }
