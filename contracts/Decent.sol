@@ -22,6 +22,7 @@ contract Decent is KIP17Metadata, Ownable {
             ownerOf(_tokenId) == msg.sender,
             "You are not the owner of thin token"
         );
+        _;
     }
 
     constructor(address _proxyAddress) internal {
@@ -131,6 +132,12 @@ contract Decent is KIP17Metadata, Ownable {
     //============================================================================
     //growing logics
     //============================================================================
+    uint256 private battleCycleTime = 3600;
+
+    function updateBattleCycleTime(uint256 _blockNumber) public onlyOwner {
+        battleCycleTime = _blockNumber;
+    }
+
     struct battleInfo {
         uint256 blockStamp;
         string stage;
@@ -138,10 +145,7 @@ contract Decent is KIP17Metadata, Ownable {
     }
     mapping(uint256 => battleInfo) private tokenIdToBattleInfo;
 
-    function setInvestorStage(uint256 _tokenId)
-        public
-        onlyTokenOwner(_tokenId)
-    {
+    function startBattle(uint256 _tokenId) public onlyTokenOwner(_tokenId) {
         require(
             !tokenIdToBattleInfo[_tokenId].onbattle,
             "investor already on battle"
@@ -156,6 +160,22 @@ contract Decent is KIP17Metadata, Ownable {
 
         tokenIdToBattleInfo[_tokenId].stage = _stage;
         tokenIdToBattleInfo[_tokenId].onbattle = true;
+    }
+
+    function isOnBattle(uint256 _tokenId) public view returns (bool) {
+        return
+            (tokenIdToBattleInfo[_tokenId].blockStamp + battleCycleTime) >
+            block.number;
+    }
+
+    function endBattle(uint256 _tokenId) public onlyTokenOwner(_tokenId) {
+        tokenIdToBattleInfo[_tokenId].onbattle = false;
+        // if (
+        //     (block.number - tokenIdToBattleInfo[_tokenId].blockStamp >
+        //         battleCycleTime)
+        // ) {
+        //     // rewarding function is needed
+        // }
     }
 
     //============================================================================
