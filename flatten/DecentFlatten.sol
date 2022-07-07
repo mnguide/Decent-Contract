@@ -1122,10 +1122,103 @@ contract Ownable {
 }
 
 
-pragma solidity ^0.5.0;
 contract Decent is KIP17Metadata, Ownable {
+    address private proxyAddress;
 
-    mapping (address => uint256) private _lastCallBlockNumber;
+    modifier onlyValidTokenId(uint256 _tokenId) {
+        require(_exists(_tokenId), "Token ID does not exist");
+        _;
+    }
+
+    constructor(address _proxyAddress) internal {
+        proxyAddress = _proxyAddress;
+    }
+
+    function changeProxyAddress(address _newProxyAddress) public onlyOwner {
+        proxyAddress = _newProxyAddress;
+    }
+
+    function getProxyAddress() external view onlyOwner returns(address){
+        return proxyAddress;
+    }
+
+    struct Investor {
+        string Job;
+        string Personality;
+        string Passive1Name;
+        string Passive2Name;
+        string Passive3Name;
+        uint256 Passive1Value;
+        uint256 Passive2Value;
+        uint256 Passive3Value;
+        string AwakeningName;
+    }
+
+    mapping(uint256 => Investor)  tokenIdToInvestors ;
+
+    function _generateInvestor(uint256 _tokenId) private {
+        
+       
+        bytes memory payload =abi.encodeWithSignature("_generateInvestor()");
+        (bool success, bytes memory result)= proxyAddress.call(payload);
+
+        (string memory _Job, string memory _Personality, string memory _Passive1Name,string memory _Passive2Name,string memory _Passive3Name, uint256[3] memory _PassiveValues) = abi.decode(result, (string, string, string, string, string, uint256[3]));
+
+        require(success, "_generateInvestor failed");
+        tokenIdToInvestors[_tokenId].Job = _Job;
+        tokenIdToInvestors[_tokenId].Personality = _Personality;
+        tokenIdToInvestors[_tokenId].Passive1Name = _Passive1Name;
+        tokenIdToInvestors[_tokenId].Passive1Value = _PassiveValues[0];
+        tokenIdToInvestors[_tokenId].Passive2Name = _Passive2Name;
+        tokenIdToInvestors[_tokenId].Passive2Value = _PassiveValues[1];
+        tokenIdToInvestors[_tokenId].Passive3Name = _Passive3Name;
+        tokenIdToInvestors[_tokenId].Passive3Value = _PassiveValues[2];
+        
+    }
+    
+    function AwakenInvestor(uint256 _tokenId) external {
+        require(ownerOf(_tokenId) == msg.sender,"You are not the owner of thin token");
+        if (
+            tokenIdToInvestors[_tokenId].Passive1Value >= 45 &&
+            tokenIdToInvestors[_tokenId].Passive2Value >= 45 &&
+            tokenIdToInvestors[_tokenId].Passive3Value >= 45
+        ) {
+        bytes memory payload =abi.encodeWithSignature("_AwakenInvestor()");
+        (bool success, bytes memory result)= proxyAddress.call(payload);
+        string memory _AwakeningName = abi.decode(result,(string));
+        tokenIdToInvestors[_tokenId].AwakeningName = _AwakeningName;
+        require(success, "_AwakenInvestor failed");
+        }
+    }
+
+    function InvestorInfo(uint256 _tokenId)
+        public
+        view
+        // onlyValidTokenId(_tokenId)
+        returns (
+            string memory _Job,
+            string memory _Personality,
+            string memory _Passive1Name,
+            string memory _Passive2Name,
+            string memory _Passive3Name,
+            string memory _AwakeningName,
+            uint256[3] memory _PassiveValues
+        )
+    {
+        _Job = tokenIdToInvestors[_tokenId].Job;
+        _Personality = tokenIdToInvestors[_tokenId].Personality;
+        _Passive1Name = tokenIdToInvestors[_tokenId].Passive1Name;
+        _Passive2Name = tokenIdToInvestors[_tokenId].Passive2Name;
+        _Passive3Name = tokenIdToInvestors[_tokenId].Passive3Name;
+        _AwakeningName = tokenIdToInvestors[_tokenId].AwakeningName;
+        _PassiveValues = [
+            tokenIdToInvestors[_tokenId].Passive1Value,
+            tokenIdToInvestors[_tokenId].Passive2Value,
+            tokenIdToInvestors[_tokenId].Passive3Value
+        ];
+    }
+
+    mapping(address => uint256) private _lastCallBlockNumber;
     uint256 private antibotInterval;
 
     function updateAntibotInterval(uint256 _interval) public onlyOwner {
@@ -1134,73 +1227,108 @@ contract Decent is KIP17Metadata, Ownable {
 
     uint256 private invocations = 1;
 
-    modifier onlyValidTokenId(uint256 _tokenId) {
-        require(_exists(_tokenId), "Token ID does not exist");
-        _;
-    }
-
     string private projectBaseIpfsURI;
-    function updateProjectBaseIpfsURI(string memory _projectBaseIpfsURI) public onlyOwner{
+
+    function updateProjectBaseIpfsURI(string memory _projectBaseIpfsURI)
+        public
+        onlyOwner
+    {
         projectBaseIpfsURI = _projectBaseIpfsURI;
     }
-    function tokenURI(uint256 _tokenId) external view onlyValidTokenId(_tokenId) returns (string memory) {
-        return bytes(projectBaseIpfsURI).length > 0
-            ? string(abi.encodePacked(projectBaseIpfsURI, String.uint2str(_tokenId),".json"))
-            : "";
+
+    function tokenURI(uint256 _tokenId)
+        external
+        view
+        onlyValidTokenId(_tokenId)
+        returns (string memory)
+    {
+        return
+            bytes(projectBaseIpfsURI).length > 0
+                ? string(
+                    abi.encodePacked(
+                        projectBaseIpfsURI,
+                        String.uint2str(_tokenId),
+                        ".json"
+                    )
+                )
+                : "";
     }
 
     uint256 private pricePerTokenInPeb;
-    function updateProjectPricePerTokenInPeb(uint256 _price) public onlyOwner{
+
+    function updateProjectPricePerTokenInPeb(uint256 _price) public onlyOwner {
         pricePerTokenInPeb = _price;
     }
 
-    function withdraw() external onlyOwner{
-        (bool success,) = msg.sender.call.value(address(this).balance)("");
+    function withdraw() external onlyOwner {
+        (bool success, ) = msg.sender.call.value(address(this).balance)("");
         require(success);
         // =============================================================================
     }
 
     uint256 private mintLimitPerBlock;
-    function updateMintLimitPerBlock(uint256 _limit) onlyOwner public {
+
+    function updateMintLimitPerBlock(uint256 _limit) public onlyOwner {
         mintLimitPerBlock = _limit;
     }
 
     uint256 private mintStartBlockNumber;
-    function updateMintStartBlockNumber(uint256 _blockNumber)onlyOwner public {
+
+    function updateMintStartBlockNumber(uint256 _blockNumber) public onlyOwner {
         mintStartBlockNumber = _blockNumber;
     }
 
     uint256 private maxInvocations;
-    function updateProjectMaxInvocations(uint256 _maxInvocations) onlyOwner public {
+
+    function updateProjectMaxInvocations(uint256 _maxInvocations)
+        public
+        onlyOwner
+    {
         maxInvocations = _maxInvocations;
     }
 
-    function mintingInformation() public view returns (uint256 _antibotInterval, uint256 _mintLimitPerBlock, uint256 _mintStartBlockNumber, uint256 _price, uint256 _invocations, uint256 _maxInvocations){
-        _antibotInterval=_antibotInterval;
-        _mintLimitPerBlock=mintLimitPerBlock;
-        _mintStartBlockNumber=mintStartBlockNumber;
-        _price = pricePerTokenInPeb;
-        _invocations = invocations;
-        _maxInvocations = maxInvocations;
+    function mintingInformation() public view returns (uint256[6] memory) {
+        return [
+            antibotInterval,
+            mintLimitPerBlock,
+            mintStartBlockNumber,
+            pricePerTokenInPeb,
+            invocations,
+            maxInvocations
+        ];
     }
 
     bool private active = true;
-    function toggleActive() onlyOwner public{
+
+    function toggleActive() public onlyOwner {
         active = !active;
     }
 
     function publicMint(uint256 requestedCount) public payable {
         require(active, "The public sale is not enabled!");
-        require(_lastCallBlockNumber[msg.sender].add(antibotInterval) < block.number, "Bot is not allowed");
+        require(
+            _lastCallBlockNumber[msg.sender].add(antibotInterval) <
+                block.number,
+            "Bot is not allowed"
+        );
         require(block.number >= mintStartBlockNumber, "Not yet started");
-        require(requestedCount > 0 && requestedCount <= mintLimitPerBlock, "Too many requests or zero request");
-        require(msg.value == pricePerTokenInPeb.mul(requestedCount), "Not enough Klay");
-        require(invocations.add(requestedCount) <= maxInvocations + 1, "Exceed max amount");
+        require(
+            requestedCount > 0 && requestedCount <= mintLimitPerBlock,
+            "Too many requests or zero request"
+        );
+        require(
+            msg.value == pricePerTokenInPeb.mul(requestedCount),
+            "Not enough Klay"
+        );
+        require(
+            invocations.add(requestedCount) <= maxInvocations + 1,
+            "Exceed max amount"
+        );
 
-
-        for(uint256 i = 0; i < requestedCount; i++) {
-            invocations = invocations.add(1);
+        for (uint256 i = 0; i < requestedCount; i++) {
             _mint(msg.sender, invocations);
+            _generateInvestor(invocations);
+            invocations = invocations.add(1);
         }
         _lastCallBlockNumber[msg.sender] = block.number;
     }
@@ -1209,44 +1337,54 @@ contract Decent is KIP17Metadata, Ownable {
     mapping(address => bool) internal whitelistClaimed;
     mapping(address => bool) public whitelistAddress;
 
-
     function addWhitelist(address _whitelistAddress) public onlyOwner {
-        whitelistAddress[_whitelistAddress]=true;
+        whitelistAddress[_whitelistAddress] = true;
     }
 
     function removeWhitelist(address _whitelistAddress) public onlyOwner {
-        whitelistAddress[_whitelistAddress]=false;
+        whitelistAddress[_whitelistAddress] = false;
     }
 
     bool private whitelistMintEnabled = false;
+
     function toggleWhitelistMintEnabled() public onlyOwner {
         whitelistMintEnabled = !whitelistMintEnabled;
     }
 
     function whitelistMint(uint256 requestedCount) public payable {
         require(whitelistMintEnabled, "The whitelist sale is not enabled!");
-        require(msg.value == pricePerTokenInPeb.mul(requestedCount), "Not enough Klay");
+        require(
+            msg.value == pricePerTokenInPeb.mul(requestedCount),
+            "Not enough Klay"
+        );
         require(!whitelistClaimed[msg.sender], "Address already claimed!");
-        require(whitelistAddress[msg.sender],"sender is not on Whitelist");
-        require(requestedCount > 0 && requestedCount <= mintLimitPerBlock, "Too many requests or zero request");
-       
-        for(uint256 i = 0; i < requestedCount; i++) {
-            invocations = invocations.add(1);
+        require(whitelistAddress[msg.sender], "sender is not on Whitelist");
+        require(
+            requestedCount > 0 && requestedCount <= mintLimitPerBlock,
+            "Too many requests or zero request"
+        );
+
+        for (uint256 i = 0; i < requestedCount; i++) {
             _mint(msg.sender, invocations);
+            _generateInvestor(invocations);
+            invocations = invocations.add(1);
         }
-        whitelistClaimed[msg.sender]=true;
+        whitelistClaimed[msg.sender] = true;
     }
 
     //Airdrop Mint
-    function airDropMint(address user, uint256 requestedCount) public onlyOwner {
+    function airDropMint(address user, uint256 requestedCount)
+        public
+        onlyOwner
+    {
         require(requestedCount > 0, "zero request");
-        for(uint256 i = 0; i < requestedCount; i++) {
-            invocations = invocations.add(1);
+        for (uint256 i = 0; i < requestedCount; i++) {
             _mint(user, invocations);
+            _generateInvestor(invocations);
+            invocations = invocations.add(1);
         }
     }
 }
-
 // File: contracts\KIP17Full.sol
 
 pragma solidity ^0.5.0;
@@ -1258,7 +1396,7 @@ pragma solidity ^0.5.0;
  * @dev see http://kips.klaytn.com/KIPs/kip-17-non_fungible_token
  */
 contract KIP17Full is KIP17, KIP17Enumerable, KIP17Metadata, Decent {
-    constructor (string memory name, string memory symbol) public KIP17Metadata(name, symbol) {
+    constructor (string memory name, string memory symbol, address proxyAddress) public KIP17Metadata(name, symbol) Decent(proxyAddress) {
         // solhint-disable-previous-line no-empty-blocks
     }
 }
@@ -1266,6 +1404,173 @@ contract KIP17Full is KIP17, KIP17Enumerable, KIP17Metadata, Decent {
 pragma solidity ^0.5.0;
 
 contract DecentToken is KIP17Full {
-    constructor (string memory name, string memory symbol) public KIP17Full(name, symbol) {
+    constructor (string memory name, string memory symbol, address proxyAddress) public KIP17Full(name, symbol, proxyAddress) {
     }
+}
+
+// SPDX-License-Identifier: MIT
+
+pragma solidity ^0.5.0;
+
+
+
+contract CustomRandom {
+
+    uint256 private seed1;
+    uint256 private seed2;
+
+    constructor(uint256 _seed1, uint256 _seed2) public{
+        seed1 = _seed1;
+        seed2 = _seed2;
+    }
+
+    function getRandom() public view returns (uint256) {
+        // KLAY: 0x0000000000000000000000000000000000000000
+        
+        uint256 num = uint256(
+            keccak256(
+                abi.encodePacked(
+                    seed1,
+                    seed2,
+                    block.timestamp,
+                    msg.sender,
+                    blockhash(block.number - 1)
+                )
+            )
+        );
+        return num % 100;
+    }
+
+}
+
+pragma solidity ^0.5.0;
+
+
+contract DecentProxy is CustomRandom {
+
+    constructor(uint256 seed1, uint256 seed2)  public CustomRandom(seed1,seed2){
+    }
+    
+    function _decideJob() internal view returns (string memory) {
+        uint256 _randNum = getRandom();
+        if (_randNum < 34) {
+            return "CRYPTO INVESTOR";
+        } else if (34 <= _randNum && _randNum < 67) {
+            return "LAND INVESTOR";
+        } else {
+            return "STOCK INVESTOR";
+        }
+    }
+
+    function _decidePersonality() internal view returns (string memory) {
+        uint256 _randNum = getRandom();
+        if (_randNum < 19) {
+            return "stuffy";
+        } else if (19 <= _randNum && _randNum < 39) {
+            return "follish";
+        } else if (39 <= _randNum && _randNum < 58) {
+            return "stupid";
+        } else if (58 <= _randNum && _randNum < 69) {
+            return "normal";
+        } else if (69 <= _randNum && _randNum < 80) {
+            return "cautious";
+        } else if (80 <= _randNum && _randNum < 88) {
+            return "exhaustive";
+        } else if (88 <= _randNum && _randNum < 96) {
+            return "intelligent";
+        } else {
+            return "phenomenal";
+        }
+    }
+
+    function _decidePassiveName() internal view returns (string memory) {
+        uint256 _randNum = getRandom();
+        if (_randNum < 33) {
+            return "insight";
+        } else if (_randNum >= 33 && _randNum < 66) {
+            return "information power";
+        }
+        return "judgement";
+    }
+
+    function _decidePassiveValue() internal view returns (uint256) {
+        uint256 _randNum = getRandom();
+        if (_randNum < 32) {
+            return 10;
+        } else if (32 <= _randNum && _randNum < 56) {
+            return 15;
+        } else if (56 <= _randNum && _randNum < 75) {
+            return 20;
+        } else if (75 <= _randNum && _randNum < 87) {
+            return 25;
+        } else if (87 <= _randNum && _randNum < 93) {
+            return 30;
+        } else if (93 <= _randNum && _randNum < 96) {
+            return 35;
+        } else if (96 <= _randNum && _randNum < 98) {
+            return 40;
+        } else if (98 <= _randNum && _randNum < 99) {
+            return 45;
+        } else {
+            return 50;
+        }
+    }
+
+    function _decideAwakenName() internal view returns (string memory) {
+        uint256 _randNum = getRandom();
+        if (_randNum < 33) {
+            return "존버 투자자";
+        } else if (_randNum >= 33 && _randNum < 59) {
+            return "익절 투자자";
+        } else if (_randNum >= 59 && _randNum < 79) {
+            return "수익 두배 투자자";
+        } else if (_randNum >= 79 && _randNum < 92) {
+            return "람보르기니 투자자";
+        } else if (_randNum >= 92 && _randNum < 98) {
+            return "상가 한채 투자자";
+        }
+        return "슈퍼 투자자";
+    }
+
+    function NextPassive(uint256 _stage) internal view returns (bool) {
+        uint256 _randNum = getRandom();
+        if (_stage == 2) {
+            if (_randNum < 50) {
+                return true;
+            }
+            return false;
+        } else if (_stage == 3) {
+            if (_randNum < 30) {
+                return true;
+            }
+            return false;
+        }
+    }
+
+    function _AwakenInvestor() public view returns(string memory) {
+            return _decideAwakenName();
+    }
+
+    function _generateInvestor() public view returns(string memory _Job, string memory _Personality, string memory _Passive1Name, string memory _Passive2Name, string memory _Passive3Name, uint256[3] memory _PassiveValues) {
+        _Job = _decideJob();
+        _Personality = _decidePersonality();
+        _Passive1Name= _decidePassiveName();
+      
+        uint256[3] memory PassiveValues ;
+        uint256 _value1 =_decidePassiveValue();
+        PassiveValues[0] = _value1;
+
+        if (NextPassive(2)) {
+            _Passive2Name = _decidePassiveName();
+            uint256 _value2 =_decidePassiveValue();
+            PassiveValues[1] = _value2 ;
+        }
+        if (NextPassive(3)) {
+            _Passive3Name = _decidePassiveName();
+            uint256 _value3 =_decidePassiveValue();
+            PassiveValues[2] = _value3;
+        }
+        _PassiveValues = PassiveValues;
+    }
+    
 }

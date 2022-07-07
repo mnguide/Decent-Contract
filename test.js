@@ -12,12 +12,23 @@ const networkID = "1001";
 const deplyedNetworkAddress = CONTRACT.networks[networkID].address;
 const contract = new caver.klay.Contract(CONTRACT.abi, deplyedNetworkAddress);
 
-async function test() {
+const testProxy_generateInvestor = () => {
   contract.methods
-    .owner()
+    .generateInvestor(1)
     .call()
-    .then((res) => {
-      console.log(res);
+    .then(() => {
+      contract.methods
+        .InvestorInfo(1)
+        .call()
+        .then((res) => {
+          console.log(res);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    })
+    .catch((err) => {
+      console.log(err);
     });
-}
-test();
+};
+testProxy_generateInvestor();
