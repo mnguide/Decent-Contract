@@ -42,7 +42,7 @@ contract KIP13 is IKIP13 {
      */
     mapping(bytes4 => bool) private _supportedInterfaces;
 
-    constructor () internal {
+    constructor() internal {
         // Derived contracts need only register support for their own interfaces,
         // we register support for KIP13 itself here
         _registerInterface(_INTERFACE_ID_KIP13);
@@ -53,7 +53,11 @@ contract KIP13 is IKIP13 {
      *
      * Time complexity O(1), guaranteed to always use less than 30 000 gas.
      */
-    function supportsInterface(bytes4 interfaceId) external view returns (bool) {
+    function supportsInterface(bytes4 interfaceId)
+        external
+        view
+        returns (bool)
+    {
         return _supportedInterfaces[interfaceId];
     }
 
@@ -74,7 +78,6 @@ contract KIP13 is IKIP13 {
     }
 }
 
-
 // File: contracts\IKIP17.sol
 
 pragma solidity ^0.5.0;
@@ -83,9 +86,21 @@ pragma solidity ^0.5.0;
  * @dev Required interface of an KIP17 compliant contract.
  */
 contract IKIP17 is IKIP13 {
-    event Transfer(address indexed from, address indexed to, uint256 indexed tokenId);
-    event Approval(address indexed owner, address indexed approved, uint256 indexed tokenId);
-    event ApprovalForAll(address indexed owner, address indexed operator, bool approved);
+    event Transfer(
+        address indexed from,
+        address indexed to,
+        uint256 indexed tokenId
+    );
+    event Approval(
+        address indexed owner,
+        address indexed approved,
+        uint256 indexed tokenId
+    );
+    event ApprovalForAll(
+        address indexed owner,
+        address indexed operator,
+        bool approved
+    );
 
     /**
      * @dev Returns the number of NFTs in `owner`'s account.
@@ -107,7 +122,11 @@ contract IKIP17 is IKIP13 {
      * - If the caller is not `from`, it must be have been allowed to move this
      * NFT by either `approve` or `setApproveForAll`.
      */
-    function safeTransferFrom(address from, address to, uint256 tokenId) public;
+    function safeTransferFrom(
+        address from,
+        address to,
+        uint256 tokenId
+    ) public;
 
     /**
      * @dev Transfers a specific NFT (`tokenId`) from one account (`from`) to
@@ -117,15 +136,32 @@ contract IKIP17 is IKIP13 {
      * - If the caller is not `from`, it must be approved to move this NFT by
      * either `approve` or `setApproveForAll`.
      */
-    function transferFrom(address from, address to, uint256 tokenId) public;
+    function transferFrom(
+        address from,
+        address to,
+        uint256 tokenId
+    ) public;
+
     function approve(address to, uint256 tokenId) public;
-    function getApproved(uint256 tokenId) public view returns (address operator);
+
+    function getApproved(uint256 tokenId)
+        public
+        view
+        returns (address operator);
 
     function setApprovalForAll(address operator, bool _approved) public;
-    function isApprovedForAll(address owner, address operator) public view returns (bool);
 
+    function isApprovedForAll(address owner, address operator)
+        public
+        view
+        returns (bool);
 
-    function safeTransferFrom(address from, address to, uint256 tokenId, bytes memory data) public;
+    function safeTransferFrom(
+        address from,
+        address to,
+        uint256 tokenId,
+        bytes memory data
+    ) public;
 }
 
 // File: contracts\math\SafeMath.sol
@@ -186,7 +222,11 @@ library SafeMath {
      *
      * _Available since v2.4.0._
      */
-    function sub(uint256 a, uint256 b, string memory errorMessage) internal pure returns (uint256) {
+    function sub(
+        uint256 a,
+        uint256 b,
+        string memory errorMessage
+    ) internal pure returns (uint256) {
         require(b <= a, errorMessage);
         uint256 c = a - b;
 
@@ -244,7 +284,11 @@ library SafeMath {
      *
      * _Available since v2.4.0._
      */
-    function div(uint256 a, uint256 b, string memory errorMessage) internal pure returns (uint256) {
+    function div(
+        uint256 a,
+        uint256 b,
+        string memory errorMessage
+    ) internal pure returns (uint256) {
         // Solidity only automatically asserts when dividing by 0
         require(b > 0, errorMessage);
         uint256 c = a / b;
@@ -281,7 +325,11 @@ library SafeMath {
      *
      * _Available since v2.4.0._
      */
-    function mod(uint256 a, uint256 b, string memory errorMessage) internal pure returns (uint256) {
+    function mod(
+        uint256 a,
+        uint256 b,
+        string memory errorMessage
+    ) internal pure returns (uint256) {
         require(b != 0, errorMessage);
         return a % b;
     }
@@ -312,7 +360,9 @@ library Address {
 
         uint256 size;
         // solhint-disable-next-line no-inline-assembly
-        assembly { size := extcodesize(account) }
+        assembly {
+            size := extcodesize(account)
+        }
         return size > 0;
     }
 }
@@ -379,8 +429,12 @@ contract IERC721Receiver {
      * @param data Additional data with no specified format
      * @return bytes4 `bytes4(keccak256("onERC721Received(address,address,uint256,bytes)"))`
      */
-    function onERC721Received(address operator, address from, uint256 tokenId, bytes memory data)
-    public returns (bytes4);
+    function onERC721Received(
+        address operator,
+        address from,
+        uint256 tokenId,
+        bytes memory data
+    ) public returns (bytes4);
 }
 
 // File: contracts\IKIP17Receiver.sol
@@ -408,21 +462,19 @@ contract IKIP17Receiver {
      * @param data Additional data with no specified format
      * @return bytes4 `bytes4(keccak256("onKIP17Received(address,address,uint256,bytes)"))`
      */
-    function onKIP17Received(address operator, address from, uint256 tokenId, bytes memory data)
-    public returns (bytes4);
+    function onKIP17Received(
+        address operator,
+        address from,
+        uint256 tokenId,
+        bytes memory data
+    ) public returns (bytes4);
 }
 
-
-
 // File: contracts\introspection\KIP13.sol
-
 
 // File: contracts\KIP17.sol
 
 pragma solidity ^0.5.0;
-
-
-
 
 /**
  * @title KIP17 Non-Fungible Token Standard basic implementation
@@ -442,16 +494,16 @@ contract KIP17 is KIP13, IKIP17 {
     bytes4 private constant _ERC721_RECEIVED = 0x150b7a02;
 
     // Mapping from token ID to owner
-    mapping (uint256 => address) private _tokenOwner;
+    mapping(uint256 => address) private _tokenOwner;
 
     // Mapping from token ID to approved address
-    mapping (uint256 => address) private _tokenApprovals;
+    mapping(uint256 => address) private _tokenApprovals;
 
     // Mapping from owner to number of owned token
-    mapping (address => Counters.Counter) private _ownedTokensCount;
+    mapping(address => Counters.Counter) private _ownedTokensCount;
 
     // Mapping from owner to operator approvals
-    mapping (address => mapping (address => bool)) private _operatorApprovals;
+    mapping(address => mapping(address => bool)) private _operatorApprovals;
 
     /*
      *     bytes4(keccak256('balanceOf(address)')) == 0x70a08231
@@ -469,7 +521,7 @@ contract KIP17 is KIP13, IKIP17 {
      */
     bytes4 private constant _INTERFACE_ID_KIP17 = 0x80ac58cd;
 
-    constructor () public {
+    constructor() public {
         // register the supported interfaces to conform to KIP17 via KIP13
         _registerInterface(_INTERFACE_ID_KIP17);
     }
@@ -480,7 +532,10 @@ contract KIP17 is KIP13, IKIP17 {
      * @return uint256 representing the amount owned by the passed address
      */
     function balanceOf(address owner) public view returns (uint256) {
-        require(owner != address(0), "KIP17: balance query for the zero address");
+        require(
+            owner != address(0),
+            "KIP17: balance query for the zero address"
+        );
 
         return _ownedTokensCount[owner].current();
     }
@@ -492,7 +547,10 @@ contract KIP17 is KIP13, IKIP17 {
      */
     function ownerOf(uint256 tokenId) public view returns (address) {
         address owner = _tokenOwner[tokenId];
-        require(owner != address(0), "KIP17: owner query for nonexistent token");
+        require(
+            owner != address(0),
+            "KIP17: owner query for nonexistent token"
+        );
 
         return owner;
     }
@@ -509,7 +567,8 @@ contract KIP17 is KIP13, IKIP17 {
         address owner = ownerOf(tokenId);
         require(to != owner, "KIP17: approval to current owner");
 
-        require(msg.sender == owner || isApprovedForAll(owner, msg.sender),
+        require(
+            msg.sender == owner || isApprovedForAll(owner, msg.sender),
             "KIP17: approve caller is not owner nor approved for all"
         );
 
@@ -524,7 +583,10 @@ contract KIP17 is KIP13, IKIP17 {
      * @return address currently approved for the given token ID
      */
     function getApproved(uint256 tokenId) public view returns (address) {
-        require(_exists(tokenId), "KIP17: approved query for nonexistent token");
+        require(
+            _exists(tokenId),
+            "KIP17: approved query for nonexistent token"
+        );
 
         return _tokenApprovals[tokenId];
     }
@@ -548,7 +610,11 @@ contract KIP17 is KIP13, IKIP17 {
      * @param operator operator address which you want to query the approval of
      * @return bool whether the given operator is approved by the given owner
      */
-    function isApprovedForAll(address owner, address operator) public view returns (bool) {
+    function isApprovedForAll(address owner, address operator)
+        public
+        view
+        returns (bool)
+    {
         return _operatorApprovals[owner][operator];
     }
 
@@ -560,9 +626,16 @@ contract KIP17 is KIP13, IKIP17 {
      * @param to address to receive the ownership of the given token ID
      * @param tokenId uint256 ID of the token to be transferred
      */
-    function transferFrom(address from, address to, uint256 tokenId) public {
+    function transferFrom(
+        address from,
+        address to,
+        uint256 tokenId
+    ) public {
         //solhint-disable-next-line max-line-length
-        require(_isApprovedOrOwner(msg.sender, tokenId), "KIP17: transfer caller is not owner nor approved");
+        require(
+            _isApprovedOrOwner(msg.sender, tokenId),
+            "KIP17: transfer caller is not owner nor approved"
+        );
 
         _transferFrom(from, to, tokenId);
     }
@@ -578,7 +651,11 @@ contract KIP17 is KIP13, IKIP17 {
      * @param to address to receive the ownership of the given token ID
      * @param tokenId uint256 ID of the token to be transferred
      */
-    function safeTransferFrom(address from, address to, uint256 tokenId) public {
+    function safeTransferFrom(
+        address from,
+        address to,
+        uint256 tokenId
+    ) public {
         safeTransferFrom(from, to, tokenId, "");
     }
 
@@ -594,9 +671,17 @@ contract KIP17 is KIP13, IKIP17 {
      * @param tokenId uint256 ID of the token to be transferred
      * @param _data bytes data to send along with a safe transfer check
      */
-    function safeTransferFrom(address from, address to, uint256 tokenId, bytes memory _data) public {
+    function safeTransferFrom(
+        address from,
+        address to,
+        uint256 tokenId,
+        bytes memory _data
+    ) public {
         transferFrom(from, to, tokenId);
-        require(_checkOnKIP17Received(from, to, tokenId, _data), "KIP17: transfer to non KIP17Receiver implementer");
+        require(
+            _checkOnKIP17Received(from, to, tokenId, _data),
+            "KIP17: transfer to non KIP17Receiver implementer"
+        );
     }
 
     /**
@@ -616,10 +701,19 @@ contract KIP17 is KIP13, IKIP17 {
      * @return bool whether the msg.sender is approved for the given token ID,
      * is an operator of the owner, or is the owner of the token
      */
-    function _isApprovedOrOwner(address spender, uint256 tokenId) internal view returns (bool) {
-        require(_exists(tokenId), "KIP17: operator query for nonexistent token");
+    function _isApprovedOrOwner(address spender, uint256 tokenId)
+        internal
+        view
+        returns (bool)
+    {
+        require(
+            _exists(tokenId),
+            "KIP17: operator query for nonexistent token"
+        );
         address owner = ownerOf(tokenId);
-        return (spender == owner || getApproved(tokenId) == spender || isApprovedForAll(owner, spender));
+        return (spender == owner ||
+            getApproved(tokenId) == spender ||
+            isApprovedForAll(owner, spender));
     }
 
     /**
@@ -646,7 +740,10 @@ contract KIP17 is KIP13, IKIP17 {
      * @param tokenId uint256 ID of the token being burned
      */
     function _burn(address owner, uint256 tokenId) internal {
-        require(ownerOf(tokenId) == owner, "KIP17: burn of token that is not own");
+        require(
+            ownerOf(tokenId) == owner,
+            "KIP17: burn of token that is not own"
+        );
 
         _clearApproval(tokenId);
 
@@ -672,8 +769,15 @@ contract KIP17 is KIP13, IKIP17 {
      * @param to address to receive the ownership of the given token ID
      * @param tokenId uint256 ID of the token to be transferred
      */
-    function _transferFrom(address from, address to, uint256 tokenId) internal {
-        require(ownerOf(tokenId) == from, "KIP17: transfer of token that is not own");
+    function _transferFrom(
+        address from,
+        address to,
+        uint256 tokenId
+    ) internal {
+        require(
+            ownerOf(tokenId) == from,
+            "KIP17: transfer of token that is not own"
+        );
         require(to != address(0), "KIP17: transfer to the zero address");
 
         _clearApproval(tokenId);
@@ -697,10 +801,13 @@ contract KIP17 is KIP13, IKIP17 {
      * @param _data bytes optional data to send along with the call
      * @return bool whether the call correctly returned the expected magic value
      */
-    function _checkOnKIP17Received(address from, address to, uint256 tokenId, bytes memory _data)
-        internal returns (bool)
-    {
-        bool success; 
+    function _checkOnKIP17Received(
+        address from,
+        address to,
+        uint256 tokenId,
+        bytes memory _data
+    ) internal returns (bool) {
+        bool success;
         bytes memory returndata;
 
         if (!to.isContract()) {
@@ -709,16 +816,34 @@ contract KIP17 is KIP13, IKIP17 {
 
         // Logic for compatibility with ERC721.
         (success, returndata) = to.call(
-            abi.encodeWithSelector(_ERC721_RECEIVED, msg.sender, from, tokenId, _data)
+            abi.encodeWithSelector(
+                _ERC721_RECEIVED,
+                msg.sender,
+                from,
+                tokenId,
+                _data
+            )
         );
-        if (returndata.length != 0 && abi.decode(returndata, (bytes4)) == _ERC721_RECEIVED) {
+        if (
+            returndata.length != 0 &&
+            abi.decode(returndata, (bytes4)) == _ERC721_RECEIVED
+        ) {
             return true;
         }
 
         (success, returndata) = to.call(
-            abi.encodeWithSelector(_KIP17_RECEIVED, msg.sender, from, tokenId, _data)
+            abi.encodeWithSelector(
+                _KIP17_RECEIVED,
+                msg.sender,
+                from,
+                tokenId,
+                _data
+            )
         );
-        if (returndata.length != 0 && abi.decode(returndata, (bytes4)) == _KIP17_RECEIVED) {
+        if (
+            returndata.length != 0 &&
+            abi.decode(returndata, (bytes4)) == _KIP17_RECEIVED
+        ) {
             return true;
         }
 
@@ -746,7 +871,11 @@ pragma solidity ^0.5.0;
  */
 contract IKIP17Enumerable is IKIP17 {
     function totalSupply() public view returns (uint256);
-    function tokenOfOwnerByIndex(address owner, uint256 index) public view returns (uint256 tokenId);
+
+    function tokenOfOwnerByIndex(address owner, uint256 index)
+        public
+        view
+        returns (uint256 tokenId);
 
     function tokenByIndex(uint256 index) public view returns (uint256);
 }
@@ -754,8 +883,6 @@ contract IKIP17Enumerable is IKIP17 {
 // File: contracts\KIP17Enumerable.sol
 
 pragma solidity ^0.5.0;
-
-
 
 /**
  * @title KIP-17 Non-Fungible Token with optional enumeration extension logic
@@ -786,7 +913,7 @@ contract KIP17Enumerable is KIP13, KIP17, IKIP17Enumerable {
     /**
      * @dev Constructor function.
      */
-    constructor () public {
+    constructor() public {
         // register the supported interface to conform to KIP17Enumerable via KIP13
         _registerInterface(_INTERFACE_ID_KIP17_ENUMERABLE);
     }
@@ -797,8 +924,15 @@ contract KIP17Enumerable is KIP13, KIP17, IKIP17Enumerable {
      * @param index uint256 representing the index to be accessed of the requested tokens list
      * @return uint256 token ID at the given index of the tokens list owned by the requested address
      */
-    function tokenOfOwnerByIndex(address owner, uint256 index) public view returns (uint256) {
-        require(index < balanceOf(owner), "KIP17Enumerable: owner index out of bounds");
+    function tokenOfOwnerByIndex(address owner, uint256 index)
+        public
+        view
+        returns (uint256)
+    {
+        require(
+            index < balanceOf(owner),
+            "KIP17Enumerable: owner index out of bounds"
+        );
         return _ownedTokens[owner][index];
     }
 
@@ -817,7 +951,10 @@ contract KIP17Enumerable is KIP13, KIP17, IKIP17Enumerable {
      * @return uint256 token ID at the given index of the tokens list
      */
     function tokenByIndex(uint256 index) public view returns (uint256) {
-        require(index < totalSupply(), "KIP17Enumerable: global index out of bounds");
+        require(
+            index < totalSupply(),
+            "KIP17Enumerable: global index out of bounds"
+        );
         return _allTokens[index];
     }
 
@@ -828,7 +965,11 @@ contract KIP17Enumerable is KIP13, KIP17, IKIP17Enumerable {
      * @param to address to receive the ownership of the given token ID
      * @param tokenId uint256 ID of the token to be transferred
      */
-    function _transferFrom(address from, address to, uint256 tokenId) internal {
+    function _transferFrom(
+        address from,
+        address to,
+        uint256 tokenId
+    ) internal {
         super._transferFrom(from, to, tokenId);
 
         _removeTokenFromOwnerEnumeration(from, tokenId);
@@ -872,7 +1013,11 @@ contract KIP17Enumerable is KIP13, KIP17, IKIP17Enumerable {
      * @param owner address owning the tokens
      * @return uint256[] List of token IDs owned by the requested address
      */
-    function _tokensOfOwner(address owner) internal view returns (uint256[] storage) {
+    function _tokensOfOwner(address owner)
+        internal
+        view
+        returns (uint256[] storage)
+    {
         return _ownedTokens[owner];
     }
 
@@ -903,7 +1048,9 @@ contract KIP17Enumerable is KIP13, KIP17, IKIP17Enumerable {
      * @param from address representing the previous owner of the given token ID
      * @param tokenId uint256 ID of the token to be removed from the tokens list of the given address
      */
-    function _removeTokenFromOwnerEnumeration(address from, uint256 tokenId) private {
+    function _removeTokenFromOwnerEnumeration(address from, uint256 tokenId)
+        private
+    {
         // To prevent a gap in from's tokens array, we store the last token in the index of the token to delete, and
         // then delete the last slot (swap and pop).
 
@@ -961,15 +1108,15 @@ pragma solidity ^0.5.0;
  */
 contract IKIP17Metadata is IKIP17 {
     function name() external view returns (string memory);
+
     function symbol() external view returns (string memory);
+
     function tokenURI(uint256 tokenId) external view returns (string memory);
 }
 
 // File: contracts\KIP17Metadata.sol
 
 pragma solidity ^0.5.0;
-
-
 
 contract KIP17Metadata is KIP13, KIP17, KIP17Enumerable, IKIP17Metadata {
     // Token name
@@ -991,7 +1138,7 @@ contract KIP17Metadata is KIP13, KIP17, KIP17Enumerable, IKIP17Metadata {
     /**
      * @dev Constructor function
      */
-    constructor (string memory name, string memory symbol) public {
+    constructor(string memory name, string memory symbol) public {
         _name = name;
         _symbol = symbol;
 
@@ -1014,34 +1161,34 @@ contract KIP17Metadata is KIP13, KIP17, KIP17Enumerable, IKIP17Metadata {
     function symbol() external view returns (string memory) {
         return _symbol;
     }
-
 }
 
 pragma solidity ^0.5.0;
 
 library String {
-    
-
-  function uint2str(uint _i) internal pure returns (string memory _uintAsString) {
-    if (_i == 0) {
-      return "0";
+    function uint2str(uint256 _i)
+        internal
+        pure
+        returns (string memory _uintAsString)
+    {
+        if (_i == 0) {
+            return "0";
+        }
+        uint256 j = _i;
+        uint256 len;
+        while (j != 0) {
+            len++;
+            j /= 10;
+        }
+        bytes memory bstr = new bytes(len);
+        uint256 k = len - 1;
+        while (_i != 0) {
+            bstr[k--] = bytes1(uint8(48 + (_i % 10)));
+            _i /= 10;
+        }
+        return string(bstr);
     }
-    uint j = _i;
-    uint len;
-    while (j != 0) {
-      len++;
-      j /= 10;
-    }
-    bytes memory bstr = new bytes(len);
-    uint k = len - 1;
-    while (_i != 0) {
-      bstr[k--] = byte(uint8(48 + _i % 10));
-      _i /= 10;
-    }
-    return string(bstr);
-  }
 }
-
 
 // File: contracts\ownership\Ownable.sol
 
@@ -1059,12 +1206,15 @@ pragma solidity ^0.5.0;
 contract Ownable {
     address payable private _owner;
 
-    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
+    event OwnershipTransferred(
+        address indexed previousOwner,
+        address indexed newOwner
+    );
 
     /**
      * @dev Initializes the contract setting the deployer as the initial owner.
      */
-    constructor () internal {
+    constructor() internal {
         _owner = msg.sender;
         emit OwnershipTransferred(address(0), _owner);
     }
@@ -1115,18 +1265,32 @@ contract Ownable {
      * @dev Transfers ownership of the contract to a new account (`newOwner`).
      */
     function _transferOwnership(address payable newOwner) internal {
-        require(newOwner != address(0), "Ownable: new owner is the zero address");
+        require(
+            newOwner != address(0),
+            "Ownable: new owner is the zero address"
+        );
         emit OwnershipTransferred(_owner, newOwner);
         _owner = newOwner;
     }
 }
 
-
 contract Decent is KIP17Metadata, Ownable {
+    //============================================================================
+    // proxy settings
+    //============================================================================
+
     address private proxyAddress;
 
     modifier onlyValidTokenId(uint256 _tokenId) {
         require(_exists(_tokenId), "Token ID does not exist");
+        _;
+    }
+
+    modifier onlyTokenOwner(uint256 _tokenId) {
+        require(
+            ownerOf(_tokenId) == msg.sender,
+            "You are not the owner of thin token"
+        );
         _;
     }
 
@@ -1138,9 +1302,13 @@ contract Decent is KIP17Metadata, Ownable {
         proxyAddress = _newProxyAddress;
     }
 
-    function getProxyAddress() external view onlyOwner returns(address){
+    function getProxyAddress() external view onlyOwner returns (address) {
         return proxyAddress;
     }
+
+    //============================================================================
+    // investor generation
+    //============================================================================
 
     struct Investor {
         string Job;
@@ -1154,17 +1322,28 @@ contract Decent is KIP17Metadata, Ownable {
         string AwakeningName;
     }
 
-    mapping(uint256 => Investor)  tokenIdToInvestors ;
+    mapping(uint256 => Investor) tokenIdToInvestors;
 
-    function _generateInvestor(uint256 _tokenId) private {
-        
-       
-        bytes memory payload =abi.encodeWithSignature("_generateInvestor()");
-        (bool success, bytes memory result)= proxyAddress.call(payload);
+    function _generateInvestor(uint256 _tokenId)
+        private
+        onlyValidTokenId(_tokenId)
+    {
+        bytes memory payload = abi.encodeWithSignature("generateInvestor()");
+        (bool success, bytes memory result) = proxyAddress.call(payload);
 
-        (string memory _Job, string memory _Personality, string memory _Passive1Name,string memory _Passive2Name,string memory _Passive3Name, uint256[3] memory _PassiveValues) = abi.decode(result, (string, string, string, string, string, uint256[3]));
+        (
+            string memory _Job,
+            string memory _Personality,
+            string memory _Passive1Name,
+            string memory _Passive2Name,
+            string memory _Passive3Name,
+            uint256[3] memory _PassiveValues
+        ) = abi.decode(
+                result,
+                (string, string, string, string, string, uint256[3])
+            );
 
-        require(success, "_generateInvestor failed");
+        require(success, "generateInvestor failed");
         tokenIdToInvestors[_tokenId].Job = _Job;
         tokenIdToInvestors[_tokenId].Personality = _Personality;
         tokenIdToInvestors[_tokenId].Passive1Name = _Passive1Name;
@@ -1173,29 +1352,30 @@ contract Decent is KIP17Metadata, Ownable {
         tokenIdToInvestors[_tokenId].Passive2Value = _PassiveValues[1];
         tokenIdToInvestors[_tokenId].Passive3Name = _Passive3Name;
         tokenIdToInvestors[_tokenId].Passive3Value = _PassiveValues[2];
-        
     }
-    
-    function AwakenInvestor(uint256 _tokenId) external {
-        require(ownerOf(_tokenId) == msg.sender,"You are not the owner of thin token");
+
+    function AwakenInvestor(uint256 _tokenId)
+        external
+        onlyTokenOwner(_tokenId)
+    {
         if (
             tokenIdToInvestors[_tokenId].Passive1Value >= 45 &&
             tokenIdToInvestors[_tokenId].Passive2Value >= 45 &&
             tokenIdToInvestors[_tokenId].Passive3Value >= 45
         ) {
-        bytes memory payload =abi.encodeWithSignature("_AwakenInvestor()");
-        (bool success, bytes memory result)= proxyAddress.call(payload);
-        string memory _AwakeningName = abi.decode(result,(string));
-        tokenIdToInvestors[_tokenId].AwakeningName = _AwakeningName;
-        require(success, "_AwakenInvestor failed");
+            bytes memory payload = abi.encodeWithSignature("AwakenInvestor()");
+            (bool success, bytes memory result) = proxyAddress.call(payload);
+            string memory _AwakeningName = abi.decode(result, (string));
+            tokenIdToInvestors[_tokenId].AwakeningName = _AwakeningName;
+            require(success, "AwakenInvestor failed");
         }
     }
 
     function InvestorInfo(uint256 _tokenId)
         public
         view
-        // onlyValidTokenId(_tokenId)
         returns (
+            // onlyValidTokenId(_tokenId)
             string memory _Job,
             string memory _Personality,
             string memory _Passive1Name,
@@ -1217,6 +1397,59 @@ contract Decent is KIP17Metadata, Ownable {
             tokenIdToInvestors[_tokenId].Passive3Value
         ];
     }
+
+    //============================================================================
+    //growing logics
+    //============================================================================
+    uint256 private battleCycleTime = 3600;
+
+    function updateBattleCycleTime(uint256 _blockNumber) public onlyOwner {
+        battleCycleTime = _blockNumber;
+    }
+
+    struct battleInfo {
+        uint256 blockStamp;
+        string stage;
+        bool onbattle;
+    }
+    mapping(uint256 => battleInfo) private tokenIdToBattleInfo;
+
+    function startBattle(uint256 _tokenId) public onlyTokenOwner(_tokenId) {
+        require(
+            !tokenIdToBattleInfo[_tokenId].onbattle,
+            "investor already on battle"
+        );
+        tokenIdToBattleInfo[_tokenId].blockStamp = block.number;
+
+        bytes memory payload = abi.encodeWithSignature("getStage()", _tokenId);
+        (bool success, bytes memory result) = proxyAddress.call(payload);
+        require(success, "getStage failed");
+
+        string memory _stage = abi.decode(result, (string));
+
+        tokenIdToBattleInfo[_tokenId].stage = _stage;
+        tokenIdToBattleInfo[_tokenId].onbattle = true;
+    }
+
+    function isOnBattle(uint256 _tokenId) public view returns (bool) {
+        return
+            (tokenIdToBattleInfo[_tokenId].blockStamp + battleCycleTime) >
+            block.number;
+    }
+
+    function endBattle(uint256 _tokenId) public onlyTokenOwner(_tokenId) {
+        tokenIdToBattleInfo[_tokenId].onbattle = false;
+        // if (
+        //     (block.number - tokenIdToBattleInfo[_tokenId].blockStamp >
+        //         battleCycleTime)
+        // ) {
+        //     // rewarding function is needed
+        // }
+    }
+
+    //============================================================================
+    // minting logics
+    //============================================================================
 
     mapping(address => uint256) private _lastCallBlockNumber;
     uint256 private antibotInterval;
@@ -1385,6 +1618,7 @@ contract Decent is KIP17Metadata, Ownable {
         }
     }
 }
+
 // File: contracts\KIP17Full.sol
 
 pragma solidity ^0.5.0;
@@ -1396,7 +1630,11 @@ pragma solidity ^0.5.0;
  * @dev see http://kips.klaytn.com/KIPs/kip-17-non_fungible_token
  */
 contract KIP17Full is KIP17, KIP17Enumerable, KIP17Metadata, Decent {
-    constructor (string memory name, string memory symbol, address proxyAddress) public KIP17Metadata(name, symbol) Decent(proxyAddress) {
+    constructor(
+        string memory name,
+        string memory symbol,
+        address proxyAddress
+    ) public KIP17Metadata(name, symbol) Decent(proxyAddress) {
         // solhint-disable-previous-line no-empty-blocks
     }
 }
@@ -1404,29 +1642,29 @@ contract KIP17Full is KIP17, KIP17Enumerable, KIP17Metadata, Decent {
 pragma solidity ^0.5.0;
 
 contract DecentToken is KIP17Full {
-    constructor (string memory name, string memory symbol, address proxyAddress) public KIP17Full(name, symbol, proxyAddress) {
-    }
+    constructor(
+        string memory name,
+        string memory symbol,
+        address proxyAddress
+    ) public KIP17Full(name, symbol, proxyAddress) {}
 }
 
 // SPDX-License-Identifier: MIT
 
 pragma solidity ^0.5.0;
 
-
-
 contract CustomRandom {
-
     uint256 private seed1;
     uint256 private seed2;
 
-    constructor(uint256 _seed1, uint256 _seed2) public{
+    constructor(uint256 _seed1, uint256 _seed2) public {
         seed1 = _seed1;
         seed2 = _seed2;
     }
 
     function getRandom() public view returns (uint256) {
         // KLAY: 0x0000000000000000000000000000000000000000
-        
+
         uint256 num = uint256(
             keccak256(
                 abi.encodePacked(
@@ -1440,17 +1678,60 @@ contract CustomRandom {
         );
         return num % 100;
     }
-
 }
 
 pragma solidity ^0.5.0;
 
-
 contract DecentProxy is CustomRandom {
+    address public MainAddress;
+    address public OwnerAddress;
 
-    constructor(uint256 seed1, uint256 seed2)  public CustomRandom(seed1,seed2){
+    function customHash(string memory _string) private pure returns (bytes32) {
+        return keccak256(abi.encodePacked(_string));
     }
-    
+
+    //==============================
+    bytes32 private judgement = customHash("judgement");
+    bytes32 private information = customHash("information power");
+    bytes32 private insight = customHash("insight");
+
+    bytes32 private Job1 = customHash("CRYPTO INVESTOR");
+    bytes32 private Job2 = customHash("LAND INVESTOR");
+    bytes32 private Job3 = customHash("STOCK INVESTOR");
+
+    bytes32 private stuffy = customHash("stuffy");
+    bytes32 private foolish = customHash("foolish");
+    bytes32 private stupid = customHash("stupid");
+    bytes32 private normal = customHash("normal");
+    bytes32 private cautious = customHash("cautious");
+    bytes32 private exhaustive = customHash("exhaustive");
+    bytes32 private intelligent = customHash("intelligent");
+    bytes32 private phenomenal = customHash("phenomenal");
+
+    bytes32 private awakeningName1 = customHash("존버 투자자");
+    bytes32 private awakeningName2 = customHash("익절 투자자");
+    bytes32 private awakeningName3 = customHash("수익 두배 투자자");
+    bytes32 private awakeningName4 = customHash("람보르기니 투자자");
+    bytes32 private awakeningName5 = customHash("상가 한채 투자자");
+    bytes32 private awakeningName6 = customHash("슈퍼 투자자");
+    //=============================
+
+    modifier onlyOwner() {
+        require(msg.sender == OwnerAddress, "not a owner");
+        _;
+    }
+
+    function setMainAddress(address _newMainAddress) public onlyOwner {
+        MainAddress = _newMainAddress;
+    }
+
+    constructor(uint256 seed1, uint256 seed2)
+        public
+        CustomRandom(seed1, seed2)
+    {
+        OwnerAddress = msg.sender;
+    }
+
     function _decideJob() internal view returns (string memory) {
         uint256 _randNum = getRandom();
         if (_randNum < 34) {
@@ -1547,30 +1828,245 @@ contract DecentProxy is CustomRandom {
         }
     }
 
-    function _AwakenInvestor() public view returns(string memory) {
-            return _decideAwakenName();
+    function AwakenInvestor() public view returns (string memory) {
+        return _decideAwakenName();
     }
 
-    function _generateInvestor() public view returns(string memory _Job, string memory _Personality, string memory _Passive1Name, string memory _Passive2Name, string memory _Passive3Name, uint256[3] memory _PassiveValues) {
+    function generateInvestor()
+        public
+        view
+        returns (
+            string memory _Job,
+            string memory _Personality,
+            string memory _Passive1Name,
+            string memory _Passive2Name,
+            string memory _Passive3Name,
+            uint256[3] memory _PassiveValues
+        )
+    {
         _Job = _decideJob();
         _Personality = _decidePersonality();
-        _Passive1Name= _decidePassiveName();
-      
-        uint256[3] memory PassiveValues ;
-        uint256 _value1 =_decidePassiveValue();
+        _Passive1Name = _decidePassiveName();
+
+        uint256[3] memory PassiveValues;
+        uint256 _value1 = _decidePassiveValue();
         PassiveValues[0] = _value1;
 
         if (NextPassive(2)) {
             _Passive2Name = _decidePassiveName();
-            uint256 _value2 =_decidePassiveValue();
-            PassiveValues[1] = _value2 ;
+            uint256 _value2 = _decidePassiveValue();
+            PassiveValues[1] = _value2;
         }
         if (NextPassive(3)) {
             _Passive3Name = _decidePassiveName();
-            uint256 _value3 =_decidePassiveValue();
+            uint256 _value3 = _decidePassiveValue();
             PassiveValues[2] = _value3;
         }
         _PassiveValues = PassiveValues;
     }
-    
+
+    uint256 public synergyPercentage = 100;
+
+    function setSynergyPercentage(uint256 _percentage) public onlyOwner {
+        synergyPercentage = _percentage;
+    }
+
+    function _calculatePower(
+        string memory _job,
+        string memory _personality,
+        string memory _passive1Name,
+        string memory _passive2Name,
+        string memory _passive3Name,
+        string memory awakeningName,
+        uint256[3] memory _passiveValues
+    ) internal view returns (uint256) {
+        uint256 power;
+        bytes32 neededTalent;
+        uint256 judgementStatus;
+        uint256 informationPowerStatus;
+        uint256 insightStatus;
+
+        bytes32 _jobHash = customHash(_job);
+        bytes32 _personalityHash = customHash(_personality);
+        bytes32 _passive1NameHash = customHash(_passive1Name);
+        bytes32 _passive2NameHash = customHash(_passive2Name);
+        bytes32 _passive3NameHash = customHash(_passive3Name);
+        bytes32 _awakeningName = customHash(awakeningName);
+
+        if (_jobHash == Job1) {
+            neededTalent = judgement;
+        } else if (_jobHash == Job2) {
+            neededTalent = information;
+        } else {
+            neededTalent = insight;
+        }
+
+        if (_personalityHash == stuffy) {
+            informationPowerStatus += 10;
+        } else if (_personalityHash == foolish) {
+            judgementStatus += 10;
+        } else if (_personalityHash == stupid) {
+            insightStatus += 10;
+        } else if (_personalityHash == normal) {
+            judgementStatus += 15;
+            informationPowerStatus += 15;
+            insightStatus += 15;
+        } else if (_personalityHash == cautious) {
+            judgementStatus += 20;
+            informationPowerStatus += 20;
+            insightStatus += 20;
+        } else if (_personalityHash == exhaustive) {
+            judgementStatus += 25;
+            informationPowerStatus += 25;
+            insightStatus += 25;
+        } else if (_personalityHash == intelligent) {
+            judgementStatus += 30;
+            informationPowerStatus += 30;
+            insightStatus += 30;
+        } else {
+            judgementStatus += 50;
+            informationPowerStatus += 50;
+            insightStatus += 50;
+        }
+
+        if (_passive1NameHash == judgement) {
+            judgementStatus += _passiveValues[0];
+        } else if (_passive1NameHash == information) {
+            informationPowerStatus += _passiveValues[0];
+        } else if (_passive1NameHash == insight) {
+            insightStatus += _passiveValues[0];
+        }
+
+        if (_passive2NameHash == judgement) {
+            judgementStatus += _passiveValues[1];
+        } else if (_passive2NameHash == information) {
+            informationPowerStatus += _passiveValues[1];
+        } else if (_passive2NameHash == insight) {
+            insightStatus += _passiveValues[1];
+        }
+
+        if (_passive3NameHash == judgement) {
+            judgementStatus += _passiveValues[2];
+        } else if (_passive3NameHash == information) {
+            informationPowerStatus += _passiveValues[2];
+        } else if (_passive3NameHash == insight) {
+            insightStatus += _passiveValues[2];
+        }
+
+        if (_awakeningName == awakeningName1) {
+            judgementStatus += 10;
+            informationPowerStatus += 10;
+            insightStatus += 10;
+        } else if (_awakeningName == awakeningName2) {
+            judgementStatus += 20;
+            informationPowerStatus += 20;
+            insightStatus += 20;
+        } else if (_awakeningName == awakeningName3) {
+            judgementStatus += 30;
+            informationPowerStatus += 30;
+            insightStatus += 30;
+        } else if (_awakeningName == awakeningName4) {
+            judgementStatus += 40;
+            informationPowerStatus += 40;
+            insightStatus += 40;
+        } else if (_awakeningName == awakeningName5) {
+            judgementStatus += 50;
+            informationPowerStatus += 50;
+            insightStatus += 50;
+        } else if (_awakeningName == awakeningName6) {
+            judgementStatus += 60;
+            informationPowerStatus += 60;
+            insightStatus += 60;
+        }
+
+        if (neededTalent == judgement) {
+            judgementStatus = (judgementStatus * synergyPercentage) / 100;
+        } else if (neededTalent == information) {
+            informationPowerStatus =
+                (informationPowerStatus * synergyPercentage) /
+                100;
+        } else if (neededTalent == insight) {
+            insightStatus = (insightStatus * synergyPercentage) / 100;
+        }
+
+        power += judgementStatus;
+        power += informationPowerStatus;
+        power += insightStatus;
+        return power;
+    }
+
+    function _getInvestorPowerAndJob(uint256 _tokenId)
+        internal
+        returns (uint256 _power, bytes32 _job)
+    {
+        bytes memory payload = abi.encodeWithSignature(
+            "InvestorInfo(uint256)",
+            _tokenId
+        );
+        (bool success, bytes memory result) = MainAddress.call(payload);
+        require(success, "InvestorInfo failed");
+        (
+            string memory job,
+            string memory personality,
+            string memory passive1Name,
+            string memory passive2Name,
+            string memory passive3Name,
+            string memory awakeningName,
+            uint256[3] memory passiveValues
+        ) = abi.decode(
+                result,
+                (string, string, string, string, string, string, uint256[3])
+            );
+        _power = _calculatePower(
+            job,
+            personality,
+            passive1Name,
+            passive2Name,
+            passive3Name,
+            awakeningName,
+            passiveValues
+        );
+        _job = customHash(job);
+    }
+
+    function getStage(uint256 _tokenId) public returns (string memory) {
+        (uint256 _power, bytes32 _job) = _getInvestorPowerAndJob(_tokenId);
+        if (_job == Job1) {
+            if (_power <= 50) {
+                return "다운 비트 ";
+            } else if (50 < _power && _power <= 100) {
+                return "셀넌스";
+            } else if (100 < _power && _power <= 150) {
+                return "마진 5배";
+            } else if (150 < _power && _power <= 200) {
+                return "마진 20배";
+            } else {
+                return "마진 100배";
+            }
+        } else if (_job == Job2) {
+            if (_power <= 50) {
+                return "부산 부동산";
+            } else if (50 < _power && _power <= 100) {
+                return "서울 부동산";
+            } else if (100 < _power && _power <= 150) {
+                return "뉴욕 부동산";
+            } else if (150 < _power && _power <= 200) {
+                return "한국 상가 매매";
+            } else {
+                return "미국 상가 매매";
+            }
+        } else if (_job == Job3) {
+            if (_power <= 50) {
+                return "코스닥";
+            } else if (50 < _power && _power <= 100) {
+                return "나스닥";
+            } else if (100 < _power && _power <= 150) {
+                return "선물 1구좌";
+            } else if (150 < _power && _power <= 200) {
+                return "선물 5구좌";
+            } else {
+                return "선물 19구좌";
+            }
+        }
+    }
 }

@@ -6,7 +6,7 @@ contract DecentProxy is CustomRandom {
     address public MainAddress;
     address public OwnerAddress;
 
-    function customHash(string memory _string) private view returns (bytes32) {
+    function customHash(string memory _string) private pure returns (bytes32) {
         return keccak256(abi.encodePacked(_string));
     }
 
