@@ -9,8 +9,8 @@ const temp = caver.klay.accounts.createWithAccountKey(addr, pkey);
 caver.klay.accounts.wallet.add(temp);
 
 const networkID = "1001";
-const deplyedNetworkAddress = CONTRACT.networks[networkID].address;
-const contract = new caver.klay.Contract(CONTRACT.abi, deplyedNetworkAddress);
+const deployedNetworkAddress = CONTRACT.networks[networkID].address;
+const contract = new caver.klay.Contract(CONTRACT.abi, deployedNetworkAddress);
 
 const testProxy_generateInvestor = () => {
   contract.methods
