@@ -6,11 +6,22 @@ import "./math/SafeMath.sol";
 import "./utils/String.sol";
 
 contract Decent is KIP17Metadata, Ownable {
+    //============================================================================
+    // proxy settings
+    //============================================================================
+
     address private proxyAddress;
 
     modifier onlyValidTokenId(uint256 _tokenId) {
         require(_exists(_tokenId), "Token ID does not exist");
         _;
+    }
+
+    modifier onlyTokenOwner(uint256 _tokenId) {
+        require(
+            ownerOf(_tokenId) == msg.sender,
+            "You are not the owner of thin token"
+        );
     }
 
     constructor(address _proxyAddress) internal {
@@ -24,6 +35,10 @@ contract Decent is KIP17Metadata, Ownable {
     function getProxyAddress() external view onlyOwner returns (address) {
         return proxyAddress;
     }
+
+    //============================================================================
+    // investor generation
+    //============================================================================
 
     struct Investor {
         string Job;
@@ -39,8 +54,11 @@ contract Decent is KIP17Metadata, Ownable {
 
     mapping(uint256 => Investor) tokenIdToInvestors;
 
-    function _generateInvestor(uint256 _tokenId) private onlyValidTokenId {
-        bytes memory payload = abi.encodeWithSignature("_generateInvestor()");
+    function _generateInvestor(uint256 _tokenId)
+        private
+        onlyValidTokenId(_tokenId)
+    {
+        bytes memory payload = abi.encodeWithSignature("generateInvestor()");
         (bool success, bytes memory result) = proxyAddress.call(payload);
 
         (
@@ -55,7 +73,7 @@ contract Decent is KIP17Metadata, Ownable {
                 (string, string, string, string, string, uint256[3])
             );
 
-        require(success, "_generateInvestor failed");
+        require(success, "generateInvestor failed");
         tokenIdToInvestors[_tokenId].Job = _Job;
         tokenIdToInvestors[_tokenId].Personality = _Personality;
         tokenIdToInvestors[_tokenId].Passive1Name = _Passive1Name;
@@ -66,21 +84,20 @@ contract Decent is KIP17Metadata, Ownable {
         tokenIdToInvestors[_tokenId].Passive3Value = _PassiveValues[2];
     }
 
-    function AwakenInvestor(uint256 _tokenId) external {
-        require(
-            ownerOf(_tokenId) == msg.sender,
-            "You are not the owner of thin token"
-        );
+    function AwakenInvestor(uint256 _tokenId)
+        external
+        onlyTokenOwner(_tokenId)
+    {
         if (
             tokenIdToInvestors[_tokenId].Passive1Value >= 45 &&
             tokenIdToInvestors[_tokenId].Passive2Value >= 45 &&
             tokenIdToInvestors[_tokenId].Passive3Value >= 45
         ) {
-            bytes memory payload = abi.encodeWithSignature("_AwakenInvestor()");
+            bytes memory payload = abi.encodeWithSignature("AwakenInvestor()");
             (bool success, bytes memory result) = proxyAddress.call(payload);
             string memory _AwakeningName = abi.decode(result, (string));
             tokenIdToInvestors[_tokenId].AwakeningName = _AwakeningName;
-            require(success, "_AwakenInvestor failed");
+            require(success, "AwakenInvestor failed");
         }
     }
 
@@ -110,6 +127,40 @@ contract Decent is KIP17Metadata, Ownable {
             tokenIdToInvestors[_tokenId].Passive3Value
         ];
     }
+
+    //============================================================================
+    //growing logics
+    //============================================================================
+    struct battleInfo {
+        uint256 blockStamp;
+        string stage;
+        bool onbattle;
+    }
+    mapping(uint256 => battleInfo) private tokenIdToBattleInfo;
+
+    function setInvestorStage(uint256 _tokenId)
+        public
+        onlyTokenOwner(_tokenId)
+    {
+        require(
+            !tokenIdToBattleInfo[_tokenId].onbattle,
+            "investor already on battle"
+        );
+        tokenIdToBattleInfo[_tokenId].blockStamp = block.number;
+
+        bytes memory payload = abi.encodeWithSignature("getStage()", _tokenId);
+        (bool success, bytes memory result) = proxyAddress.call(payload);
+        require(success, "getStage failed");
+
+        string memory _stage = abi.decode(result, (string));
+
+        tokenIdToBattleInfo[_tokenId].stage = _stage;
+        tokenIdToBattleInfo[_tokenId].onbattle = true;
+    }
+
+    //============================================================================
+    // minting logics
+    //============================================================================
 
     mapping(address => uint256) private _lastCallBlockNumber;
     uint256 private antibotInterval;
