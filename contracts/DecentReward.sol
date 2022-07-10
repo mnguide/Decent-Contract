@@ -101,7 +101,7 @@ contract DecentReward is KIP17Metadata, Ownable, CustomRandom {
      */
 
     function rewardToken(address _to, uint256 _stage) public onlyFromMain {
-        uint256 _randNum = getRandom();
+        uint256 _randNum = getRandom(_stage);
         if (_stage == 101 || _stage == 201 || _stage == 301) {} else if (
             _stage == 102 || _stage == 202 || _stage == 302
         ) {} else if (

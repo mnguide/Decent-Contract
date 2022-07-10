@@ -69,7 +69,7 @@ contract Decent is KIP17Metadata, Ownable {
         private
         onlyValidTokenId(_tokenId)
     {
-        bytes memory payload = abi.encodeWithSignature("generateInvestor()");
+        bytes memory payload = abi.encodeWithSignature("generateInvestor(uint256)",_tokenId);
         (bool success, bytes memory result) = proxyAddress.call(payload);
 
         (
@@ -99,17 +99,17 @@ contract Decent is KIP17Metadata, Ownable {
         external
         onlyTokenOwner(_tokenId)
     {
-        if (
+        require(
             tokenIdToInvestors[_tokenId].Passive1Value >= 45 &&
-            tokenIdToInvestors[_tokenId].Passive2Value >= 45 &&
-            tokenIdToInvestors[_tokenId].Passive3Value >= 45
-        ) {
-            bytes memory payload = abi.encodeWithSignature("AwakenInvestor()");
-            (bool success, bytes memory result) = proxyAddress.call(payload);
-            string memory _AwakeningName = abi.decode(result, (string));
-            tokenIdToInvestors[_tokenId].AwakeningName = _AwakeningName;
-            require(success, "AwakenInvestor failed");
-        }
+                tokenIdToInvestors[_tokenId].Passive2Value >= 45 &&
+                tokenIdToInvestors[_tokenId].Passive3Value >= 45,"not enough status to awake"
+        );
+
+        bytes memory payload = abi.encodeWithSignature("AwakenInvestor()");
+        (bool success, bytes memory result) = proxyAddress.call(payload);
+        string memory _AwakeningName = abi.decode(result, (string));
+        tokenIdToInvestors[_tokenId].AwakeningName = _AwakeningName;
+        require(success, "AwakenInvestor failed");
     }
 
     function InvestorInfo(uint256 _tokenId)

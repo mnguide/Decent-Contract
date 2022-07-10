@@ -36,29 +36,49 @@ contract DecentProxy is CustomRandom {
     string private AWAKENIGNANE6 = "슈퍼 투자자";
 
     //==============================
-    bytes32 private Passive1Hash = 0x88993362ef110885b3d82853b64529867e82f76382334fe6a34f40dd41c40bc3;
-    bytes32 private Passive2Hash = 0xa177e4e865c114731f054aa6379a0a8ae474aa2afaed0d591c83323e5d592f03;
-    bytes32 private Passive3Hash = 0x26f448b1920b93a1d8ecbd30dd2ae960d286161c174407752328eecfa26e088f;
+    bytes32 private Passive1Hash =
+        0x88993362ef110885b3d82853b64529867e82f76382334fe6a34f40dd41c40bc3;
+    bytes32 private Passive2Hash =
+        0xa177e4e865c114731f054aa6379a0a8ae474aa2afaed0d591c83323e5d592f03;
+    bytes32 private Passive3Hash =
+        0x26f448b1920b93a1d8ecbd30dd2ae960d286161c174407752328eecfa26e088f;
 
-    bytes32 private Job1Hash = 0xd4e4b7d45ddfdfac19824055bd34ba31f0c17057a3bc789790b226918872383c;
-    bytes32 private Job2Hash = 0x03d92c677e6383c8791ef14e24d5be4b646d120245b0c1100ad9cf6d22ef8d1a;
-    bytes32 private Job3Hash = 0x1031511ae5fd7f05079793ef7d49680213208ec313484b734d2c72bfe1f9dc43;
+    bytes32 private Job1Hash =
+        0xd4e4b7d45ddfdfac19824055bd34ba31f0c17057a3bc789790b226918872383c;
+    bytes32 private Job2Hash =
+        0x03d92c677e6383c8791ef14e24d5be4b646d120245b0c1100ad9cf6d22ef8d1a;
+    bytes32 private Job3Hash =
+        0x1031511ae5fd7f05079793ef7d49680213208ec313484b734d2c72bfe1f9dc43;
 
-    bytes32 private Personality1Hash = 0xa4dc2f5426f17b19a35f761ee6fe04da88f3484b4fca3997de258942b7097b0f;
-    bytes32 private Personality2Hash = 0xbd9ae9edfb3f092a680172b894e845ab406f0a0786b59ad45a75be76672d8d3c;
-    bytes32 private Personality3Hash = 0x7071b71b760057caa0035a3d23f9d4435c0376a5f4558adc025198cf5ebcb183;
-    bytes32 private Personality4Hash = 0xc75a36e6ff8c24bab57c92d42ea7dcdecc261cbbf377444a0b6e3ec4e9129efe;
-    bytes32 private Personality5Hash = 0x36a0d128bdab6703326c3a16d2547edf1926b4d27502f1fcc69192b77398bc89;
-    bytes32 private Personality6Hash = 0x5b51217a7d0bd34699d06b636aa5e827af0abe77f9f3adba92e4b4aae7473bf1;
-    bytes32 private Personality7Hash = 0xf4c0a54006aa5dbaf5702b65a1fd76dce8ae5cd53329a812f270ef4d8705ecff;
-    bytes32 private Personality8Hash = 0x01df5cb4b29952f77486f83f2f8116e42116106afbc6aa0ef16893a87f31e13b;
+    bytes32 private Personality1Hash =
+        0xa4dc2f5426f17b19a35f761ee6fe04da88f3484b4fca3997de258942b7097b0f;
+    bytes32 private Personality2Hash =
+        0xbd9ae9edfb3f092a680172b894e845ab406f0a0786b59ad45a75be76672d8d3c;
+    bytes32 private Personality3Hash =
+        0x7071b71b760057caa0035a3d23f9d4435c0376a5f4558adc025198cf5ebcb183;
+    bytes32 private Personality4Hash =
+        0xc75a36e6ff8c24bab57c92d42ea7dcdecc261cbbf377444a0b6e3ec4e9129efe;
+    bytes32 private Personality5Hash =
+        0x36a0d128bdab6703326c3a16d2547edf1926b4d27502f1fcc69192b77398bc89;
+    bytes32 private Personality6Hash =
+        0x5b51217a7d0bd34699d06b636aa5e827af0abe77f9f3adba92e4b4aae7473bf1;
+    bytes32 private Personality7Hash =
+        0xf4c0a54006aa5dbaf5702b65a1fd76dce8ae5cd53329a812f270ef4d8705ecff;
+    bytes32 private Personality8Hash =
+        0x01df5cb4b29952f77486f83f2f8116e42116106afbc6aa0ef16893a87f31e13b;
 
-    bytes32 private awakeningName1Hash = 0x585a12a7a9b809c4cff534847ce927ced003d116887a71588c764bf05f50c277;
-    bytes32 private awakeningName2Hash = 0xd885bb7bf4c3e80bb924737a93ca0f21dfc5af8f66432a4450ad5a8f9e6bd4ab;
-    bytes32 private awakeningName3Hash = 0x5d70a2427b77936b385cbf8d7b29873005248b3f5a2cdfb2fc355f6c32b994af;
-    bytes32 private awakeningName4Hash = 0x8c3d575127b47fea39151ff524c6da3c90af1ae2346c0f4a425a544e4176de5b;
-    bytes32 private awakeningName5Hash = 0x30e754921b1357415b0c878081956f5d667d35c462a78eeac63afa3fef193260;
-    bytes32 private awakeningName6Hash = 0xaf85ddbeabf953c8aa2305da80fb3d39ce8a62cbb158a790cfdec9b149cfed47;
+    bytes32 private awakeningName1Hash =
+        0x585a12a7a9b809c4cff534847ce927ced003d116887a71588c764bf05f50c277;
+    bytes32 private awakeningName2Hash =
+        0xd885bb7bf4c3e80bb924737a93ca0f21dfc5af8f66432a4450ad5a8f9e6bd4ab;
+    bytes32 private awakeningName3Hash =
+        0x5d70a2427b77936b385cbf8d7b29873005248b3f5a2cdfb2fc355f6c32b994af;
+    bytes32 private awakeningName4Hash =
+        0x8c3d575127b47fea39151ff524c6da3c90af1ae2346c0f4a425a544e4176de5b;
+    bytes32 private awakeningName5Hash =
+        0x30e754921b1357415b0c878081956f5d667d35c462a78eeac63afa3fef193260;
+    bytes32 private awakeningName6Hash =
+        0xaf85ddbeabf953c8aa2305da80fb3d39ce8a62cbb158a790cfdec9b149cfed47;
     //=============================
 
     modifier onlyOwner() {
@@ -70,15 +90,15 @@ contract DecentProxy is CustomRandom {
         MainAddress = _newMainAddress;
     }
 
-    constructor(
-        uint256 seed1,
-        uint256 seed2
-    ) public CustomRandom(seed1, seed2) {
+    constructor(uint256 seed1, uint256 seed2)
+        public
+        CustomRandom(seed1, seed2)
+    {
         OwnerAddress = msg.sender;
     }
 
-    function _decideJob() internal view returns (string memory) {
-        uint256 _randNum = getRandom();
+    function _decideJob(uint256 _nonce) internal returns (string memory) {
+        uint256 _randNum = getRandom(_nonce);
         if (_randNum < 34) {
             return JOB1;
         } else if (34 <= _randNum && _randNum < 67) {
@@ -88,8 +108,12 @@ contract DecentProxy is CustomRandom {
         }
     }
 
-    function _decidePersonality() internal view returns (string memory) {
-        uint256 _randNum = getRandom();
+    function _decidePersonality(uint256 _nonce)
+        internal
+        
+        returns (string memory)
+    {
+        uint256 _randNum = getRandom(_nonce);
         if (_randNum < 19) {
             return PERSONALITY1;
         } else if (19 <= _randNum && _randNum < 39) {
@@ -109,8 +133,12 @@ contract DecentProxy is CustomRandom {
         }
     }
 
-    function _decidePassiveName() internal view returns (string memory) {
-        uint256 _randNum = getRandom();
+    function _decidePassiveName(uint256 _nonce)
+        internal
+        
+        returns (string memory)
+    {
+        uint256 _randNum = getRandom(_nonce);
         if (_randNum < 33) {
             return PASSIVE3;
         } else if (_randNum >= 33 && _randNum < 66) {
@@ -119,8 +147,12 @@ contract DecentProxy is CustomRandom {
         return PASSIVE1;
     }
 
-    function _decidePassiveValue() internal view returns (uint256) {
-        uint256 _randNum = getRandom();
+    function _decidePassiveValue(uint256 _nonce)
+        internal
+        
+        returns (uint256)
+    {
+        uint256 _randNum = getRandom(_nonce);
         if (_randNum < 32) {
             return 10;
         } else if (32 <= _randNum && _randNum < 56) {
@@ -142,8 +174,12 @@ contract DecentProxy is CustomRandom {
         }
     }
 
-    function _decideAwakenName() internal view returns (string memory) {
-        uint256 _randNum = getRandom();
+    function _decideAwakenName(uint256 _nonce)
+        internal
+        
+        returns (string memory)
+    {
+        uint256 _randNum = getRandom(_nonce);
         if (_randNum < 33) {
             return AWAKENIGNANE1;
         } else if (_randNum >= 33 && _randNum < 59) {
@@ -158,8 +194,8 @@ contract DecentProxy is CustomRandom {
         return AWAKENIGNANE6;
     }
 
-    function NextPassive(uint256 _stage) internal view returns (bool) {
-        uint256 _randNum = getRandom();
+    function NextPassive(uint256 _stage) internal  returns (bool) {
+        uint256 _randNum = getRandom(_stage);
         if (_stage == 2) {
             if (_randNum < 50) {
                 return true;
@@ -173,13 +209,17 @@ contract DecentProxy is CustomRandom {
         }
     }
 
-    function AwakenInvestor() public view returns (string memory) {
-        return _decideAwakenName();
+    function AwakenInvestor(uint256 _tokenId)
+        public
+        
+        returns (string memory)
+    {
+        return _decideAwakenName(_tokenId);
     }
 
-    function generateInvestor()
+    function generateInvestor(uint256 _tokenId)
         public
-        view
+        
         returns (
             string memory _Job,
             string memory _Personality,
@@ -189,24 +229,25 @@ contract DecentProxy is CustomRandom {
             uint256[3] memory _PassiveValues
         )
     {
-        _Job = _decideJob();
-        _Personality = _decidePersonality();
-        _Passive1Name = _decidePassiveName();
+        _Job = _decideJob(_tokenId);
+        _Personality = _decidePersonality(_tokenId);
+        _Passive1Name = _decidePassiveName(_tokenId);
 
         uint256[3] memory PassiveValues;
-        uint256 _value1 = _decidePassiveValue();
+        uint256 _value1 = _decidePassiveValue(_tokenId);
         PassiveValues[0] = _value1;
 
         if (NextPassive(2)) {
-            _Passive2Name = _decidePassiveName();
-            uint256 _value2 = _decidePassiveValue();
+            _Passive2Name = _decidePassiveName(_tokenId);
+            uint256 _value2 = _decidePassiveValue(_tokenId);
             PassiveValues[1] = _value2;
+            if (NextPassive(3)) {
+                _Passive3Name = _decidePassiveName(_tokenId);
+                uint256 _value3 = _decidePassiveValue(_tokenId);
+                PassiveValues[2] = _value3;
+            }
         }
-        if (NextPassive(3)) {
-            _Passive3Name = _decidePassiveName();
-            uint256 _value3 = _decidePassiveValue();
-            PassiveValues[2] = _value3;
-        }
+
         _PassiveValues = PassiveValues;
     }
 
@@ -435,6 +476,4 @@ contract DecentProxy is CustomRandom {
             }
         }
     }
-
-    
 }
