@@ -54,24 +54,6 @@ contract DecentReward is KIP17Metadata, Ownable, CustomRandom {
     17 = "화려한 각성의 빛"; 
     */
 
-    uint256 private POTION1 = 1;
-    uint256 private POTION2 = 2;
-    uint256 private POTION3 = 3;
-    uint256 private POTION4 = 4;
-    uint256 private POTION5 = 5;
-    uint256 private POTION6 = 6;
-    uint256 private POTION7 = 7;
-    uint256 private POTION8 = 8;
-    uint256 private POTION9 = 9;
-    uint256 private POTION10 = 10;
-    uint256 private POTION11 = 11;
-    uint256 private POTION12 = 12;
-    uint256 private POTION13 = 13;
-    uint256 private POTION14 = 14;
-    uint256 private POTION15 = 15;
-    uint256 private POTION16 = 16;
-    uint256 private POTION17 = 17;
-
     mapping(uint256 => uint256) tokenIdToPotions;
 
     function getTokenPotionInfo(uint256 _tokenId) public view onlyValidTokenId(_tokenId) returns(uint256){
