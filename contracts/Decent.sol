@@ -11,6 +11,23 @@ contract Decent is KIP17Metadata, Ownable {
     //============================================================================
 
     address private proxyAddress;
+    address private rewardAddress;
+
+    function setRewardAddress(address _newRewardAddress) public onlyOwner {
+        rewardAddress = _newRewardAddress;
+    }
+
+    function getRewardAddress() public view returns (address) {
+        return rewardAddress;
+    }
+
+    function setProxyAddress(address _newProxyAddress) public onlyOwner {
+        proxyAddress = _newProxyAddress;
+    }
+
+    function getProxyAddress() external view returns (address) {
+        return proxyAddress;
+    }
 
     modifier onlyValidTokenId(uint256 _tokenId) {
         require(_exists(_tokenId), "Token ID does not exist");
@@ -25,16 +42,9 @@ contract Decent is KIP17Metadata, Ownable {
         _;
     }
 
-    constructor(address _proxyAddress) internal {
+    constructor(address _proxyAddress, address _rewardAddress) public {
         proxyAddress = _proxyAddress;
-    }
-
-    function changeProxyAddress(address _newProxyAddress) public onlyOwner {
-        proxyAddress = _newProxyAddress;
-    }
-
-    function getProxyAddress() external view onlyOwner returns (address) {
-        return proxyAddress;
+        rewardAddress = _rewardAddress;
     }
 
     //============================================================================
@@ -105,8 +115,8 @@ contract Decent is KIP17Metadata, Ownable {
     function InvestorInfo(uint256 _tokenId)
         public
         view
+        onlyValidTokenId(_tokenId)
         returns (
-            // onlyValidTokenId(_tokenId)
             string memory _Job,
             string memory _Personality,
             string memory _Passive1Name,
@@ -132,15 +142,11 @@ contract Decent is KIP17Metadata, Ownable {
     //============================================================================
     //growing logics
     //============================================================================
-    uint256 private battleCycleTime = 3600;
-
-    function updateBattleCycleTime(uint256 _blockNumber) public onlyOwner {
-        battleCycleTime = _blockNumber;
-    }
+    uint256 private battleCycleTime = 3600 * 6;
 
     struct battleInfo {
         uint256 blockStamp;
-        string stage;
+        uint256 stage;
         bool onbattle;
     }
     mapping(uint256 => battleInfo) private tokenIdToBattleInfo;
@@ -152,11 +158,14 @@ contract Decent is KIP17Metadata, Ownable {
         );
         tokenIdToBattleInfo[_tokenId].blockStamp = block.number;
 
-        bytes memory payload = abi.encodeWithSignature("getStage()", _tokenId);
+        bytes memory payload = abi.encodeWithSignature(
+            "getStage(uint256)",
+            _tokenId
+        );
         (bool success, bytes memory result) = proxyAddress.call(payload);
         require(success, "getStage failed");
 
-        string memory _stage = abi.decode(result, (string));
+        uint256 _stage = abi.decode(result, (uint256));
 
         tokenIdToBattleInfo[_tokenId].stage = _stage;
         tokenIdToBattleInfo[_tokenId].onbattle = true;
@@ -168,14 +177,25 @@ contract Decent is KIP17Metadata, Ownable {
             block.number;
     }
 
+    function _rewardToken(uint256 _tokenId, uint256 _stage) public {
+        bytes memory payload = abi.encodeWithSignature(
+            "rewardToken(uint256,uint256)",
+            _tokenId,
+            _stage
+        );
+        (bool success, ) = rewardAddress.call(payload);
+        require(success, "rewarded successfully");
+    }
+
     function endBattle(uint256 _tokenId) public onlyTokenOwner(_tokenId) {
+        require(tokenIdToBattleInfo[_tokenId].onbattle, "not on battle");
+        require(
+            block.number - tokenIdToBattleInfo[_tokenId].blockStamp >
+                battleCycleTime,
+            "battle not ended"
+        );
         tokenIdToBattleInfo[_tokenId].onbattle = false;
-        // if (
-        //     (block.number - tokenIdToBattleInfo[_tokenId].blockStamp >
-        //         battleCycleTime)
-        // ) {
-        //     // rewarding function is needed
-        // }
+        _rewardToken(_tokenId, tokenIdToBattleInfo[_tokenId].stage);
     }
 
     //============================================================================

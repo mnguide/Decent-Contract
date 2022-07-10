@@ -1,11 +1,9 @@
-// File: contracts\KIP17Full.sol
-
 pragma solidity ^0.5.0;
 
 import "./KIP17.sol";
 import "./KIP17Enumerable.sol";
 import "./KIP17Metadata.sol";
-import "./Decent.sol";
+import "./DecentReward.sol";
 
 /**
  * @title Full KIP-17 Token
@@ -13,8 +11,18 @@ import "./Decent.sol";
  * Moreover, it includes approve all functionality using operator terminology
  * @dev see http://kips.klaytn.com/KIPs/kip-17-non_fungible_token
  */
-contract KIP17Full is KIP17, KIP17Enumerable, KIP17Metadata, Decent {
-    constructor (string memory name, string memory symbol, address proxyAddress) public KIP17Metadata(name, symbol) Decent(proxyAddress) {
+contract DecentRewardToken is
+    KIP17,
+    KIP17Enumerable,
+    KIP17Metadata,
+    DecentReward
+{
+    constructor(
+        string memory name,
+        string memory symbol,
+        uint256 seed1,
+        uint256 seed2
+    ) public KIP17Metadata(name, symbol) DecentReward(seed1, seed2) {
         // solhint-disable-previous-line no-empty-blocks
     }
 }
