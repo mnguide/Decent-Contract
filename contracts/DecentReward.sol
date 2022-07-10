@@ -10,11 +10,10 @@ contract DecentReward is KIP17Metadata, Ownable, CustomRandom {
     address private MainAddress;
     uint256 private invocations;
 
-    constructor(
-        uint256 seed1,
-        uint256 seed2
-    ) public CustomRandom(seed1, seed2) {
-    }
+    constructor(uint256 seed1, uint256 seed2)
+        public
+        CustomRandom(seed1, seed2)
+    {}
 
     modifier onlyFromMain() {
         require(msg.sender == MainAddress, "only proxyAddress");
@@ -56,10 +55,16 @@ contract DecentReward is KIP17Metadata, Ownable, CustomRandom {
 
     mapping(uint256 => uint256) tokenIdToPotions;
 
-    function getTokenPotionInfo(uint256 _tokenId) public view onlyValidTokenId(_tokenId) returns(uint256){
+    function getTokenPotionInfo(uint256 _tokenId)
+        public
+        view
+        onlyValidTokenId(_tokenId)
+        returns (uint256)
+    {
         return tokenIdToPotions[_tokenId];
     }
-        /*
+
+    /*
     stage code 
 
     101="다운 비트"
@@ -82,6 +87,12 @@ contract DecentReward is KIP17Metadata, Ownable, CustomRandom {
 
      */
 
+    function mintWithPotion(uint256 _to, uint256 _potion) private {
+        _mint(_to, invocations);
+        tokenIdToPotions[invocations] = _potion;
+        invocations = invocations.add(1);
+    }
+
     function rewardToken(address _to, uint256 _stage) public onlyFromMain {
         uint256 _randNum = getRandom(_stage);
         if (_stage == 101 || _stage == 201 || _stage == 301) {} else if (
@@ -91,9 +102,7 @@ contract DecentReward is KIP17Metadata, Ownable, CustomRandom {
         ) {} else if (
             _stage == 104 || _stage == 204 || _stage == 304
         ) {} else if (_stage == 105 || _stage == 205 || _stage == 305) {}
-        _mint(_to, invocations);
-        tokenIdToPotions[invocations] = POTION1;
-        invocations = invocations.add(1);
+        mintWithPotion(_to, _stage);
     }
 
     string private projectBaseIpfsURI;
@@ -113,7 +122,8 @@ contract DecentReward is KIP17Metadata, Ownable, CustomRandom {
                 ? string(
                     abi.encodePacked(
                         projectBaseIpfsURI,
-                        String.uint2str(_tokenId),"/",
+                        String.uint2str(_tokenId),
+                        "/",
                         tokenIdToPotions[invocations],
                         ".json"
                     )

@@ -69,7 +69,10 @@ contract Decent is KIP17Metadata, Ownable {
         private
         onlyValidTokenId(_tokenId)
     {
-        bytes memory payload = abi.encodeWithSignature("generateInvestor(uint256)",_tokenId);
+        bytes memory payload = abi.encodeWithSignature(
+            "generateInvestor(uint256)",
+            _tokenId
+        );
         (bool success, bytes memory result) = proxyAddress.call(payload);
 
         (
@@ -102,7 +105,8 @@ contract Decent is KIP17Metadata, Ownable {
         require(
             tokenIdToInvestors[_tokenId].Passive1Value >= 45 &&
                 tokenIdToInvestors[_tokenId].Passive2Value >= 45 &&
-                tokenIdToInvestors[_tokenId].Passive3Value >= 45,"not enough status to awake"
+                tokenIdToInvestors[_tokenId].Passive3Value >= 45,
+            "not enough status to awake"
         );
 
         bytes memory payload = abi.encodeWithSignature("AwakenInvestor()");
@@ -177,10 +181,10 @@ contract Decent is KIP17Metadata, Ownable {
             block.number;
     }
 
-    function _rewardToken(uint256 _tokenId, uint256 _stage) public {
+    function _rewardToken(uint256 _stage) public {
         bytes memory payload = abi.encodeWithSignature(
-            "rewardToken(uint256,uint256)",
-            _tokenId,
+            "rewardToken(address,uint256)",
+            msg.sender,
             _stage
         );
         (bool success, ) = rewardAddress.call(payload);
@@ -195,7 +199,7 @@ contract Decent is KIP17Metadata, Ownable {
             "battle not ended"
         );
         tokenIdToBattleInfo[_tokenId].onbattle = false;
-        _rewardToken(_tokenId, tokenIdToBattleInfo[_tokenId].stage);
+        _rewardToken(tokenIdToBattleInfo[_tokenId].stage);
     }
 
     //============================================================================
