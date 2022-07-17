@@ -181,7 +181,7 @@ contract Decent is KIP17Metadata, Ownable {
             block.number;
     }
 
-    function _rewardToken(uint256 _stage) public {
+    function _rewardToken(uint256 _stage) private {
         bytes memory payload = abi.encodeWithSignature(
             "rewardToken(address,uint256)",
             msg.sender,
