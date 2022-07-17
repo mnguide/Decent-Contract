@@ -5,7 +5,7 @@ pragma solidity ^0.5.0;
 contract CustomRandom {
     uint256 private seed1;
     uint256 private seed2;
-    uint10 private nonce;
+    uint256 private nonce;
 
     constructor(uint256 _seed1, uint256 _seed2) public {
         seed1 = _seed1;
@@ -27,7 +27,7 @@ contract CustomRandom {
                 )
             )
         );
+        nonce = nonce + (num % 100);
         return num % 100;
-        nonce += num % 100;
     }
 }

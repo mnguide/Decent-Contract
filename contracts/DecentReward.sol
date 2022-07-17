@@ -87,25 +87,20 @@ contract DecentReward is KIP17Metadata, Ownable, CustomRandom {
 
      */
 
-    function _mintWithPotion(uint256 _to, uint256 _potion) private {
+    function _mintWithPotion(address _to, uint256 _potion) private {
         _mint(_to, invocations);
         tokenIdToPotions[invocations] = _potion;
         invocations = invocations.add(1);
     }
 
-    function _getPotion(uint256 _stage) private returns (uint256[] memory) {
+    function _getPotion(uint256 _stage) private returns (uint8[1] memory) {
         uint256 _randNum = getRandom(_stage);
         if (_stage == 101 || _stage == 201 || _stage == 301) {
-            return [
-                1,
-                _randNum == 1 ? 10 : 0,
-                _randNum == 50 ? 11 : 0,
-                _randNum == 99 ? 12 : 0
-            ];
+            return [1];
         } else if (_stage == 102 || _stage == 202 || _stage == 302) {
-            return [_randNum < 10 ? (_randNum < 5 ? 6 : 2): 0, ];
+            return [_randNum < 10 ? (_randNum < 5 ? 6 : 2) : 0];
         } else if (_stage == 103 || _stage == 203 || _stage == 303) {
-            return [_randNum < 5 ? (_randNum < 2 ? 7 : 3) : 0,];
+            return [_randNum < 5 ? (_randNum < 2 ? 7 : 3) : 0];
         } else if (_stage == 104 || _stage == 204 || _stage == 304) {
             return [_randNum < 3 ? (_randNum < 1 ? 8 : 4) : 0];
         } else if (_stage == 105 || _stage == 205 || _stage == 305) {
@@ -114,8 +109,8 @@ contract DecentReward is KIP17Metadata, Ownable, CustomRandom {
     }
 
     function rewardToken(address _to, uint256 _stage) public onlyFromMain {
-        uint256[] _potion = _getPotion(_stage);
-        for (uint256 i = 0; i < _potion.length; i++) {
+        uint8[1] memory _potion = _getPotion(_stage);
+        for (uint8 i = 0; i < _potion.length; i++) {
             if (_potion[i] != 0) {
                 _mintWithPotion(_to, _potion[i]);
             }
