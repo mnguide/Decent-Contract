@@ -2,13 +2,10 @@
 
 pragma solidity ^0.5.0;
 
-import "../math/SafeMath.sol";
-
 contract CustomRandom {
-    using SafeMath for uint256;
     uint256 private seed1;
     uint256 private seed2;
-    uint256 private nonce = 0;
+    uint10 private nonce;
 
     constructor(uint256 _seed1, uint256 _seed2) public {
         seed1 = _seed1;
@@ -26,11 +23,11 @@ contract CustomRandom {
                     msg.sender,
                     address(this),
                     block.number,
-                    blockhash(block.number - 1)
+                    blockhash(block.number - nonce + 1)
                 )
             )
         );
         return num % 100;
-        nonce = nonce.add(1);
+        nonce += num % 100;
     }
 }
