@@ -252,6 +252,12 @@ contract Decent is KIP17Metadata, Ownable {
         pricePerTokenInPeb = _price;
     }
 
+    uint256 private whitelistPricePerTokenInPeb;
+
+    function updateProjectWhitelistPricePerTokenInPeb(uint256 _price) public onlyOwner {
+        whitelistPricePerTokenInPeb = _price;
+    }
+
     function withdraw() external onlyOwner {
         (bool success, ) = msg.sender.call.value(address(this).balance)("");
         require(success);
@@ -279,12 +285,13 @@ contract Decent is KIP17Metadata, Ownable {
         maxInvocations = _maxInvocations;
     }
 
-    function mintingInformation() public view returns (uint256[6] memory) {
+    function mintingInformation() public view returns (uint256[7] memory) {
         return [
             antibotInterval,
             mintLimitPerBlock,
             mintStartBlockNumber,
             pricePerTokenInPeb,
+            whitelistPricePerTokenInPeb,
             invocations,
             maxInvocations
         ];
@@ -350,7 +357,7 @@ contract Decent is KIP17Metadata, Ownable {
     function whitelistMint(uint256 requestedCount) public payable {
         require(whitelistMintEnabled, "The whitelist sale is not enabled!");
         require(
-            msg.value == pricePerTokenInPeb.mul(requestedCount),
+            msg.value == whitelistPricePerTokenInPeb.mul(requestedCount),
             "Not enough Klay"
         );
         require(!whitelistClaimed[msg.sender], "Address already claimed!");
