@@ -108,6 +108,9 @@ contract DecentReward is KIP17Metadata, Ownable, CustomRandom {
         }
     }
 
+    //포션 리워드 로직 수정 필요
+    //포션 사용 로직 수정 필요
+
     function rewardToken(address _to, uint256 _stage) public onlyFromMain {
         uint8[1] memory _potion = _getPotion(_stage);
         for (uint8 i = 0; i < _potion.length; i++) {

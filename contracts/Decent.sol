@@ -224,6 +224,10 @@ contract Decent is KIP17Metadata, Ownable {
         projectBaseIpfsURI = _projectBaseIpfsURI;
     }
 
+    function getProjectBaseIpfsURI() external view returns (string memory) {
+        return projectBaseIpfsURI;
+    }
+
     function tokenURI(uint256 _tokenId)
         external
         view
@@ -290,6 +294,10 @@ contract Decent is KIP17Metadata, Ownable {
 
     function toggleActive() public onlyOwner {
         active = !active;
+    }
+
+    function getActiveStatus() external view returns (bool) {
+        return active;
     }
 
     function publicMint(uint256 requestedCount) public payable {
